@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+# Pi OS image access script
+# This script mounts & spawns a chrooted & qemu'd bash inside a Pi OS image
+# Written by Gina Haeussge <gina at octoprint dot org>, based on work by Guy Sheffer <guy at gmail dot com>
+# GPL V3
+#
+# Usage: enter_image <image path>
+
+set -e
+
+export LC_ALL=C
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+IMAGE=$1
+if [ ! -f "$IMAGE" ] || [ "$IMAGE" == "" ]; then
+  echo "Error: could not find image: $IMAGE"
+  exit 1
+fi
+
+export DIST_PATH=${DIR}
+echo "DIST_PATH=$DIST_PATH"
+
+source $DIR/config
+source $DIR/common.sh
+
+function execute_chroot_bash() {
+
+  # In docker, these extra commands are required to enable this black-magic
+  if [ -f /.dockerenv ] && [ "$(arch)" != "armv7l" ] && [ "$(arch)" != "aarch64" ] ; then
+    if [ "$EDITBASE_ARCH" == "armv7l" ]; then
+      update-binfmts --enable qemu-arm
+    elif [ "$EDITBASE_ARCH" == "aarch64" ] || [ "$EDITBASE_ARCH" == "arm64" ]; then
+      update-binfmts --enable qemu-aarch64
+    fi
+    mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc || true
+  fi
+
+  # black magic of qemu-arm-static
+  if [ "$(arch)" != "armv7l" ] && [ "$(arch)" != "aarch64" ] ; then
+    if [ "$EDITBASE_ARCH" == "armv7l" ]; then
+      cp `which qemu-arm-static` usr/bin/qemu-arm-static
+    elif [ "$EDITBASE_ARCH" == "aarch64" ] || [ "$EDITBASE_ARCH" == "arm64" ]; then
+      cp `which qemu-aarch64-static` usr/bin/qemu-aarch64-static
+    fi
+  fi
+    
+  if [ "$(arch)" != "armv7l" ] && [ "$(arch)" != "aarch64" ] && [ "$(arch)" != "arm64" ] ; then
+    if [ "$EDITBASE_ARCH" == "armv7l" ]; then
+      echo "Building on non-ARM device a armv7l system, using qemu-arm-static"
+      chroot . usr/bin/qemu-arm-static /bin/bash
+    elif [ "$EDITBASE_ARCH" == "aarch64" ] || [ "$EDITBASE_ARCH" == "arm64" ]; then
+      echo "Building on non-ARM device a aarch64/arm64 system, using qemu-aarch64-static"
+      chroot . usr/bin/qemu-aarch64-static /bin/bash
+    fi
+  else
+    echo "Building on ARM device a armv7l/aarch64/arm64 system, not using qemu"
+    chroot . /bin/bash
+  fi
+}
+
+mkdir -p $EDITBASE_WORKSPACE
+mkdir -p $EDITBASE_MOUNT_PATH
+
+install_cleanup_trap
+install_fail_on_error_trap
+unmount_image $EDITBASE_MOUNT_PATH force || true
+
+pushd $EDITBASE_WORKSPACE
+  # mount root and boot partition
+  mount_image $IMAGE $EDITBASE_ROOT_PARTITION $EDITBASE_MOUNT_PATH
+  if [ -n "$EDITBASE_APT_CACHE" ] && [ "$EDITBASE_APT_CACHE" != "no" ]
+  then
+    mkdir -p "$EDITBASE_APT_CACHE"
+    mount --bind "$EDITBASE_APT_CACHE" $EDITBASE_MOUNT_PATH/var/cache/apt
+  fi
+
+  #Edit pi filesystem
+  pushd $EDITBASE_MOUNT_PATH
+
+    #make QEMU boot (remember to return)
+    if [ "$EDITBASE_DISTRO" == "raspbian" ]; then
+      fixLd
+    fi
+    
+    ### Execute bash ###
+    execute_chroot_bash
+    
+    if [ "$EDITBASE_DISTRO" == "raspbian" ]; then
+      restoreLd
+    fi
+  popd
+  
+  # unmount first boot, then root partition
+  unmount_image $EDITBASE_MOUNT_PATH
+popd

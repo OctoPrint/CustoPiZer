@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+# EditBase script
+# Basic and mandatory settings for the base of an OctoPi customization run
+# Written by Gina Haeussge <gina at octoprint dot org>, 
+# based on work by Guy Sheffer <guysoft at gmail dot com>
+# GPL V3
+########
+set -x
+set -e
+
+export LC_ALL=C
+
+source /common.sh
+install_cleanup_trap
+
+if [ "${EDITBASE_DISTRO}" == "ubuntu" ]; then
+  unpack /filesystem/ubuntu / root
+
+  mv /etc/resolv.conf /etc/resolv.conf.orig || true
+  echo "nameserver 8.8.8.8" > /etc/resolv.conf
+  echo "nameserver 8.8.4.4" >> /etc/resolv.conf
+  echo "nameserver 1.1.1.1" >> /etc/resolv.conf
+  
+  apt-get update
+  apt-get install -y net-tools wireless-tools dhcpcd5
+  if [ $( is_in_apt policykit-1 ) -eq 1 ]; then
+    apt-get -y install policykit-1
+  fi
+  
+  # prevent any installed services from automatically starting
+  echo exit 101 > /usr/sbin/policy-rc.d
+  chmod +x /usr/sbin/policy-rc.d
+  systemctl enable dhcpcd.service
+  
+  #Undo prevent any installed services from automatically starting
+  rm -r /usr/sbin/policy-rc.d || true
+fi
+
+if [ -n "$EDITBASE_APT_PROXY" ]
+then
+  echo "Acquire::http { Proxy \"http://$EDITBASE_APT_PROXY\"; };" > /etc/apt/apt.conf.d/02octopi_build_proxy
+fi
+
+if [ -n "$EDITBASE_PYPI_INDEX" ]
+then
+  pip_index_config="[global]\nindex-url = $EDITBASE_PYPI_INDEX"
+  easyinstall_index_config="[easy_install]\nindex-url = $EDITBASE_PYPI_INDEX"
+
+  mkdir -p /root/.pip
+  echo -e "$pip_index_config" > /root/.pip/pip.conf
+  echo -e "$easyinstall_index_config" > /root/.pydistutils.cfg
+
+  mkdir -p /home/"${EDITBASE_USER}"/.pip
+  sudo -u "${EDITBASE_USER}" echo -e "$pip_index_config" > /home/pi/.pip/pip.conf
+  sudo -u "${EDITBASE_USER}" echo -e "$easyinstall_index_config" > /home/pi/.pydistutils.cfg
+
+  echo "Configured pypi index url $BASE_PYPI_INDEX"
+  cat /home/"${EDITBASE_USER}"/.pip/pip.conf
+  cat /home/"${EDITBASE_USER}"/.pydistutils.cfg
+fi
+
+apt-get update
+if [ $( is_in_apt policykit-1 ) -eq 1 ]; then
+  sudo apt-get -y install policykit-1
+fi
+
+# prevent any installed services from automatically starting
+echo exit 101 > /usr/sbin/policy-rc.d
+chmod +x /usr/sbin/policy-rc.d

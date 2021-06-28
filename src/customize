@@ -1,0 +1,165 @@
+#!/usr/bin/env bash
+# OctoPi customization script
+# This script takes an OctoPi image and runs customization scripts on it
+# Written by Gina Haeussge <gina at octoprint dot org>, based on work by Guy Sheffer <guy at gmail dot com>
+# GPL V3
+#
+# Usage: customize [ <image path> [ <script path ] ]
+#
+# If no image path is provided, the script will assume /CustoPiZer/workspace/input.img
+# If no script path is provided, the script will assume /CustoPiZer/workspace/scripts
+
+set -e
+
+export LC_ALL=C
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+export DIST_PATH=${DIR}
+echo "DIST_PATH=$DIST_PATH"
+
+source $DIR/config
+source $DIR/common.sh
+
+IMAGE=$1
+if [ "$IMAGE" == "" ]; then
+  IMAGE=$EDITBASE_WORKSPACE/input.img
+fi
+
+if [ ! -f "$IMAGE" ]; then
+  echo "Error: could not find image: $IMAGE"
+  exit 1
+fi
+
+CUSTOMIZE_SCRIPT_PATH=$2
+if [ "$CUSTOMIZE_SCRIPT_PATH" == "" ]; then
+  CUSTOMIZE_SCRIPT_PATH=$EDITBASE_WORKSPACE/scripts
+fi
+
+if [ ! -d "$CUSTOMIZE_SCRIPT_PATH" ]; then
+  echo "Error: script path is not a directory: $CUSTOMIZE_SCRIPT_PATH"
+  exit 1
+fi
+
+function copy_files() {
+  #move filesystem files
+  if [ -d "$1" ]; then
+    cp -vr --preserve=mode,timestamps "$1" .
+  fi
+}
+
+function execute_chroot_script() {
+
+  # In docker, these extra commands are required to enable this black-magic
+  if [ -f /.dockerenv ] && [ "$(arch)" != "armv7l" ] && [ "$(arch)" != "aarch64" ] ; then
+    if [ "$EDITBASE_ARCH" == "armv7l" ]; then
+      update-binfmts --enable qemu-arm
+    elif [ "$EDITBASE_ARCH" == "aarch64" ] || [ "$EDITBASE_ARCH" == "arm64" ]; then
+      update-binfmts --enable qemu-aarch64
+    fi
+    mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc || true
+  fi
+
+  # black magic of qemu-arm-static
+  if [ "$(arch)" != "armv7l" ] && [ "$(arch)" != "aarch64" ] ; then
+    if [ "$EDITBASE_ARCH" == "armv7l" ]; then
+      cp `which qemu-arm-static` usr/bin/qemu-arm-static
+    elif [ "$EDITBASE_ARCH" == "aarch64" ] || [ "$EDITBASE_ARCH" == "arm64" ]; then
+      cp `which qemu-aarch64-static` usr/bin/qemu-aarch64-static
+    fi
+  fi
+  
+  echo "Running $1 in chroot..."
+  cp $1 chroot_script
+  chmod 755 chroot_script
+  cp "$DIR/common.sh" common.sh
+  chmod 755 common.sh
+  
+  if [ "$(arch)" != "armv7l" ] && [ "$(arch)" != "aarch64" ] && [ "$(arch)" != "arm64" ] ; then
+    if [ "$EDITBASE_ARCH" == "armv7l" ]; then
+      echo "Building on non-ARM device a armv7l system, using qemu-arm-static"
+      chroot . usr/bin/qemu-arm-static /bin/bash /chroot_script
+    elif [ "$EDITBASE_ARCH" == "aarch64" ] || [ "$EDITBASE_ARCH" == "arm64" ]; then
+      echo "Building on non-ARM device a aarch64/arm64 system, using qemu-aarch64-static"
+      chroot . usr/bin/qemu-aarch64-static /bin/bash /chroot_script
+    fi
+  else
+    echo "Building on ARM device a armv7l/aarch64/arm64 system, not using qemu"
+    chroot . /bin/bash /chroot_script
+  fi
+  
+  #cleanup
+  rm chroot_script
+}
+
+function cleanup_files() {
+  if [ -d "files" ]; then
+    rm -rfv "files"
+  fi
+}
+
+mkdir -p $EDITBASE_WORKSPACE
+mkdir -p $EDITBASE_MOUNT_PATH
+
+install_cleanup_trap
+install_fail_on_error_trap
+unmount_image $EDITBASE_MOUNT_PATH force || true
+
+pushd $EDITBASE_WORKSPACE
+  rm output.img || true
+
+  cp $IMAGE output.img
+  EDITBASE_IMG_PATH=$EDITBASE_WORKSPACE/output.img
+
+  if [ -n "$EDITBASE_IMAGE_ENLARGEROOT" ]
+  then
+    # make our image a bit larger so we don't run into size problems...
+    enlarge_ext $EDITBASE_IMG_PATH $EDITBASE_ROOT_PARTITION $EDITBASE_IMAGE_ENLARGEROOT
+  fi
+
+  # mount root and boot partition
+  mount_image $EDITBASE_IMG_PATH $EDITBASE_ROOT_PARTITION $EDITBASE_MOUNT_PATH
+  if [ -n "$EDITBASE_APT_CACHE" ] && [ "$EDITBASE_APT_CACHE" != "no" ]
+  then
+    mkdir -p "$EDITBASE_APT_CACHE"
+    mount --bind "$EDITBASE_APT_CACHE" $EDITBASE_MOUNT_PATH/var/cache/apt
+  fi
+
+  #Edit pi filesystem
+  pushd $EDITBASE_MOUNT_PATH
+
+    #make QEMU boot (remember to return)
+    if [ "$EDITBASE_DISTRO" == "raspbian" ]; then
+      fixLd
+    fi
+    
+    ### Execute chroot scripts ###
+    
+    execute_chroot_script "$DIR/start_chroot_script"
+
+    copy_files $CUSTOMIZE_SCRIPT_PATH/files
+    for script in $(find $CUSTOMIZE_SCRIPT_PATH -maxdepth 1 -not -type d | sort)
+    do
+        execute_chroot_script "$script"
+    done
+    cleanup_files 
+
+    execute_chroot_script "$DIR/end_chroot_script"
+    
+    if [ "$EDITBASE_DISTRO" == "raspbian" ]; then
+      restoreLd
+    fi
+  popd
+  
+  # unmount first boot, then root partition
+  unmount_image $EDITBASE_MOUNT_PATH
+  chmod 777 $EDITBASE_IMG_PATH
+
+  if [ -n "$EDITBASE_IMAGE_RESIZEROOT" ]
+  then
+    # resize image to minimal size + provided size
+    minimize_ext $EDITBASE_IMG_PATH $EDITBASE_ROOT_PARTITION $EDITBASE_IMAGE_RESIZEROOT
+  fi
+popd
+
+echo_green -e "\nEDIT SUCCEEDED!\n"

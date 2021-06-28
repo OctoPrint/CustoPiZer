@@ -1,0 +1,44 @@
+if [ -f ${DIST_PATH}/config.local ]
+then
+  echo "Sourcing distro config.local..."
+  source ${DIST_PATH}/config.local
+fi
+
+###############################################################################
+# Default config
+
+[ -n "$EDITBASE_DISTRO" ] || EDITBASE_DISTRO=raspbian
+
+[ -n "$EDITBASE_WORKSPACE" ] || EDITBASE_WORKSPACE=${DIST_PATH}/workspace
+[ -n "$EDITBASE_MOUNT_PATH" ] || EDITBASE_MOUNT_PATH=$EDITBASE_WORKSPACE/mount
+
+# The root partiton of the image filesystem, 2 for raspbian
+[ -n "$EDITBASE_ROOT_PARTITION" ] || EDITBASE_ROOT_PARTITION=2
+
+# if set will enlarge root parition prior to build by provided size in MB
+[ -n "$EDITBASE_IMAGE_ENLARGEROOT" ] || EDITBASE_IMAGE_ENLARGEROOT=
+
+# if set will resize root partition on image after build to minimum size + 
+# provided size in MB
+[ -n "$EDITBASE_IMAGE_RESIZEROOT" ] || EDITBASE_IMAGE_RESIZEROOT=
+
+# a local directory on the build server to bind mount under /var/cache/apt
+[ -n "$EDITBASE_APT_CACHE" ] || EDITBASE_APT_CACHE=$EDITBASE_WORKSPACE/aptcache
+
+# a host:port combo for a apt-proxy (such as apt-cacher-ng) to use
+[ -n "$EDITBASE_APT_PROXY" ] || EDITBASE_APT_PROXY=
+
+# an alternative pypi index url to use, e.g. a proxy such as devpi
+[ -n "$EDITBASE_PYPI_INDEX" ] || EDITBASE_PYPI_INDEX=
+
+# Arch for now either armv7l, arm64 or aarch64
+[ -n "$EDITBASE_ARCH" ] || EDITBASE_ARCH=armv7l
+
+
+###############################################################################
+# Print and export the final configuration.
+
+echo "================================================================"
+echo "Using the following config:"
+while IFS= read -r var; do export "$var"; echo "$var=${!var}"; done < <(compgen -A variable "EDITBASE")
+echo "================================================================"
