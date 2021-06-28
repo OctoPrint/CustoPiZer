@@ -20,7 +20,7 @@ If you need to make additional files available inside the image during build, pl
 inside the image build under `/files`. Then build and run CustoPiZer via Docker:
 
 ```
-docker run -it --rm --privileged -v ./workspace:/CustoPiZer/workspace ghcr.io/octoprint/custopizer:latest
+docker run --rm --privileged -v /path/to/workspace:/CustoPiZer/workspace ghcr.io/octoprint/custopizer:latest
 ```
 
 Your customized image will be located in the `workspace` directory and named `output.img`.
