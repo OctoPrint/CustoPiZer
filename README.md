@@ -17,7 +17,7 @@ their customization. YMMV.
 
 Create a local workspace directory, place an image file therein named `input.img` and `scripts` containing your customization scripts.
 If you need to make additional files available inside the image during build, place them inside `scripts/files` -- they will be mounted
-inside the image build under `/files`. Then build and run CustoPiZer via Docker:
+inside the image build under `/files`. Then run CustoPiZer via Docker:
 
 ```
 docker run --rm --privileged -v /path/to/workspace:/CustoPiZer/workspace ghcr.io/octoprint/custopizer:latest
