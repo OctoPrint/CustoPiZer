@@ -253,3 +253,64 @@ sudo -u pi /home/pi/oprint/bin/python /files/settings/merge-settings.py /files/s
 >
 > Make sure to not ship any secret keys, passphrases, generated UUIDs or similar here. They will otherwise be the same across all instances created with
 > this image!
+
+## Running from a GitHub Action
+
+Running CustoPiZer from a GitHub Action is also possible. Due to the requirement for running in `--privileged` mode it however required a manual `docker run` 
+call and also a `sudo modprobe loop` for the image mounts to work inside the container.
+
+A basic example that updates OctoPrint inside OctoPi 0.18.0 can be found below:
+
+`scripts/01-update-octoprint`
+``` bash
+set -x
+set -e
+
+export LC_ALL=C
+
+source /common.sh
+install_cleanup_trap
+
+sudo -u pi /home/pi/oprint/bin/pip install -U OctoPrint
+```
+
+`.github/workflows/build.yml`
+``` yaml
+name: "Update OctoPi image"
+
+on:
+  push:
+    branches:
+    - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: "Build"
+    runs-on: ubuntu-latest
+    steps:
+    - name: "⬇ Checkout"
+      uses: actions/checkout@v2
+    - name: "⬇ Download latest input image"
+      run: |
+        mkdir build
+        cd build
+        curl -L https://github.com/guysoft/OctoPi/releases/download/0.18.0/octopi-buster-armhf-lite-0.18.0.zip --output image.zip
+        unzip image.zip
+        mv *.img input.img
+        rm *.zip
+    - name: "🏗 Run CustoPiZer"
+      run: |
+        sudo modprobe loop
+        ls -la build
+        docker run --rm --privileged \
+          -v ${{ github.workspace }}/build:/CustoPiZer/workspace \
+          -v ${{ github.workspace }}/scripts:/CustoPiZer/workspace/scripts \
+          ghcr.io/octoprint/custopizer:latest
+        ls -la build
+    - name: ⬆ Upload output image
+      uses: actions/upload-artifact@v1
+      with:
+        name: output.img
+        path: build/output.img
+```
