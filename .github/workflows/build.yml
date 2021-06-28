@@ -26,7 +26,6 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: ./src
-        repository: OctoPrint/CustoPiZer
         push: true
         tags: |
           ghcr.io/octoprint/custopizer:latest
