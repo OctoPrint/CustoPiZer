@@ -314,3 +314,5 @@ jobs:
         name: output.img
         path: build/output.img
 ```
+
+For a more complex example that also includes repository dispatch, creating releases and attaching assets, take a look at the scripts and workflow of [OctoPrint/OctoPi-UpToDate](https://github.com/OctoPrint/OctoPi-UpToDate).
