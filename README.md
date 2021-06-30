@@ -114,8 +114,24 @@ export LC_ALL=C
 source /common.sh
 install_cleanup_trap
 
-sudo -u pi /home/pi/oprint/bin/pip install -U OctoPrint
+if [ -n "$OCTOPRINT_VERSION" ]; then
+    sudo -u pi /home/pi/oprint/bin/pip install -U OctoPrint==$OCTOPRINT_VERSION
+else
+    sudo -u pi /home/pi/oprint/bin/pip install -U OctoPrint
+fi
 ```
+
+Note: This also allows you to specify the OctoPrint version to install by setting the environment variable `OCTOPRINT_VERSION` to our target version,
+e.g.
+
+```
+docker run --rm --privileged \
+  -e OCTOPRINT_VERSION=1.6.1 \
+  -v /path/to/workspace:/CustoPiZer/workspace \
+  ghcr.io/octoprint/custopizer:latest
+```
+
+This also allows to install prereleases. If this environment variable is not set, the latest available release will be installed.
 
 ### Preinstalling additional plugins
 
