@@ -66,6 +66,20 @@ Place the image of the current [OctoPi release](https://octoprint.org/download) 
 Run CustoPiZer. A new file `output.img` will be generated that only differs from the input in having seen its preinstalled OctoPrint
 version now updated to the latest release.
 
+### Inspecting an image
+
+CustoPiZer also ships with an interactive `enter_image` script that mounts the image, starts the chrooted qemu, drops you into a bash, and on exit from that
+unmounts and exists again.
+
+This allows you to inspect an existing image prior or post modification, e.g. to test stuff out interactively. Be sure to always operate on a copy of the image
+as the image *will* be changed by you interacting with it, even if only subtly (e.g. file timestamps).
+
+To use, you have to slightly modify the docker call:
+
+```
+docker run -it --rm --privileged /path/to/image.img:/image.img ghcr.io/octoprint/custopizer:latest /CustoPiZer/enter_image /image.img
+```
+
 ## Writing customization scripts
 
 To ensure error handling is taken care of and some tooling is available, all customization scripts should start with these lines:
