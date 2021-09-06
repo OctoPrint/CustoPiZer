@@ -18,7 +18,7 @@ runs:
       run: |
         sudo modprobe loop
 
-        envs=$(echo '${{ inputs.environment }}' | jq -r 'to_entries | map("-e \"" + .key + "=" + (.value | tostring) + "\"") | join(" ")')
+        envs=$(echo '${{ inputs.environment }}' | jq -r 'to_entries | map("-e " + .key + "=" + (.value | tostring)) | join(" ")')
         command="--rm --privileged $envs -v ${{ inputs.workspace }}:/CustoPiZer/workspace -v ${{ inputs.scripts }}:/CustoPiZer/workspace/scripts ghcr.io/octoprint/custopizer:latest"
         echo "About to execute 'docker run $command'..."
 
