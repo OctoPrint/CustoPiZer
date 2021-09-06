@@ -1,0 +1,27 @@
+name: "Run CustoPiZer"
+description: "Runs the CustoPiZer tool"
+inputs:
+  workspace:
+    description: "Path to the workspace"
+    required: true
+  scripts:
+    description: "Path to the scripts to mount"
+    required: true
+  environment:
+    description: "Additional environment variables to pass to the docker call, as JSON object, e.g. {'OCTOPRINT_VERSION': '1.7.0', 'OTHER_VAR': 'value'}"
+    required: false
+    default: '{}'
+runs:
+  using: "composite"
+  steps:
+    - name: "Run CustoPiZer"
+      run: |
+        envs=$(echo "{{ inputs.environment }}" | jq -r 'to_entries | map("-e \"" + .key + "=" + (.value | tostring) + "\"") | join(" ")')
+
+        sudo modprobe loop
+        docker run --rm --privileged \
+          $envs \
+          -v ${{ inputs.workspace }}:/CustoPiZer/workspace \
+          -v ${{ inputs.scripts }}:/CustoPiZer/workspace/scripts \
+          ghcr.io/octoprint/custopizer:latest
+      shell: bash
