@@ -16,12 +16,11 @@ runs:
   steps:
     - name: "Run CustoPiZer"
       run: |
-        envs=$(echo '${{ inputs.environment }}' | jq -r 'to_entries | map("-e \"" + .key + "=" + (.value | tostring) + "\"") | join(" ")')
-
         sudo modprobe loop
-        docker run --rm --privileged \
-          $envs \
-          -v ${{ inputs.workspace }}:/CustoPiZer/workspace \
-          -v ${{ inputs.scripts }}:/CustoPiZer/workspace/scripts \
-          ghcr.io/octoprint/custopizer:latest
+
+        envs=$(echo '${{ inputs.environment }}' | jq -r 'to_entries | map("-e \"" + .key + "=" + (.value | tostring) + "\"") | join(" ")')
+        command="--rm --privileged $envs -v ${{ inputs.workspace }}:/CustoPiZer/workspace -v ${{ inputs.scripts }}:/CustoPiZer/workspace/scripts ghcr.io/octoprint/custopizer:latest"
+        echo "About to execute 'docker run $command'..."
+
+        docker run $command
       shell: bash
