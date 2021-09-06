@@ -16,7 +16,7 @@ runs:
   steps:
     - name: "Run CustoPiZer"
       run: |
-        envs=$(echo "{{ inputs.environment }}" | jq -r 'to_entries | map("-e \"" + .key + "=" + (.value | tostring) + "\"") | join(" ")')
+        envs=$(echo "${{ inputs.environment }}" | jq -r 'to_entries | map("-e \"" + .key + "=" + (.value | tostring) + "\"") | join(" ")')
 
         sudo modprobe loop
         docker run --rm --privileged \
