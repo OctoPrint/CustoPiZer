@@ -80,6 +80,44 @@ To use, you have to slightly modify the docker call:
 docker run -it --rm --privileged /path/to/image.img:/image.img ghcr.io/octoprint/custopizer:latest /CustoPiZer/enter_image /image.img
 ```
 
+## Running from a GitHub Action
+
+There's a composite action available that can be used as a step inside a GitHub Action workflow:
+
+``` yaml
+- name: Run CustoPiZer
+  uses: OctoPrint/CustoPiZer@main
+  with:
+    workspace: "${{ github.workspace }}/build"
+    scripts:  "${{ github.workspace }}/scripts"
+```
+
+It's also possible to pass on a JSON encoded object with additional environment variables to pass on to the docker call and make usable
+inside the script context, e.g.:
+
+``` yaml
+- name: Run CustoPiZer
+  uses: OctoPrint/CustoPiZer@main
+  with:
+    workspace: "${{ github.workspace }}/build"
+    scripts:  "${{ github.workspace }}/scripts"
+    environment: '{ "OCTOPRINT_VERSION": "${{ env.OCTOPRINT_VERSION }}" }'
+```
+
+> 👆 **Heads-up**
+>
+> Make sure to use *double quotes* for the JSON object keys and values, otherwise `jq` will raise a syntax error.
+> 
+> This is ok:
+>
+>     environment: '{ "OCTOPRINT_VERSION": "${{ env.OCTOPRINT_VERSION }}" }'
+>
+> This will fail:
+>
+>     environment: "{ 'OCTOPRINT_VERSION': '${{ env.OCTOPRINT_VERSION }}' }"
+
+For a complex example usage that also includes repository dispatch, creating releases and attaching assets, take a look at the scripts and workflow of [OctoPrint/OctoPi-UpToDate](https://github.com/OctoPrint/OctoPi-UpToDate).
+
 ## Writing customization scripts
 
 To ensure error handling is taken care of and some tooling is available, all customization scripts should start with these lines:
@@ -143,6 +181,17 @@ docker run --rm --privileged \
   -e OCTOPRINT_VERSION=1.6.1 \
   -v /path/to/workspace:/CustoPiZer/workspace \
   ghcr.io/octoprint/custopizer:latest
+```
+
+or for the GitHub action:
+
+``` yaml
+- name: Run CustoPiZer
+  uses: OctoPrint/CustoPiZer@main
+  with:
+    workspace: "${{ github.workspace }}/build"
+    scripts:  "${{ github.workspace }}/scripts"
+    environment: '{ "OCTOPRINT_VERSION": "1.6.1" }'
 ```
 
 This also allows to install prereleases. If this environment variable is not set, the latest available release will be installed.
@@ -284,65 +333,3 @@ sudo -u pi /home/pi/oprint/bin/python /files/settings/merge-settings.py /files/s
 > Make sure to not ship any secret keys, passphrases, generated UUIDs or similar here. They will otherwise be the same across all instances created with
 > this image!
 
-## Running from a GitHub Action
-
-Running CustoPiZer from a GitHub Action is also possible. Due to the requirement for running in `--privileged` mode it however required a manual `docker run` 
-call and also a `sudo modprobe loop` for the image mounts to work inside the container.
-
-A basic example that updates OctoPrint inside OctoPi 0.18.0 can be found below:
-
-`scripts/01-update-octoprint`
-``` bash
-set -x
-set -e
-
-export LC_ALL=C
-
-source /common.sh
-install_cleanup_trap
-
-sudo -u pi /home/pi/oprint/bin/pip install -U OctoPrint
-```
-
-`.github/workflows/build.yml`
-``` yaml
-name: "Update OctoPi image"
-
-on:
-  push:
-    branches:
-    - main
-  workflow_dispatch:
-
-jobs:
-  build:
-    name: "Build"
-    runs-on: ubuntu-latest
-    steps:
-    - name: "⬇ Checkout"
-      uses: actions/checkout@v2
-    - name: "⬇ Download latest input image"
-      run: |
-        mkdir build
-        cd build
-        curl -L https://github.com/guysoft/OctoPi/releases/download/0.18.0/octopi-buster-armhf-lite-0.18.0.zip --output image.zip
-        unzip image.zip
-        mv *.img input.img
-        rm *.zip
-    - name: "🏗 Run CustoPiZer"
-      run: |
-        sudo modprobe loop
-        ls -la build
-        docker run --rm --privileged \
-          -v ${{ github.workspace }}/build:/CustoPiZer/workspace \
-          -v ${{ github.workspace }}/scripts:/CustoPiZer/workspace/scripts \
-          ghcr.io/octoprint/custopizer:latest
-        ls -la build
-    - name: ⬆ Upload output image
-      uses: actions/upload-artifact@v1
-      with:
-        name: output.img
-        path: build/output.img
-```
-
-For a more complex example that also includes repository dispatch, creating releases and attaching assets, take a look at the scripts and workflow of [OctoPrint/OctoPi-UpToDate](https://github.com/OctoPrint/OctoPi-UpToDate).
