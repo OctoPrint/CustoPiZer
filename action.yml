@@ -1,5 +1,8 @@
 name: "Run CustoPiZer"
 description: "Runs the CustoPiZer tool"
+branding:
+  icon: box
+  color: green
 inputs:
   workspace:
     description: "Path to the workspace"
