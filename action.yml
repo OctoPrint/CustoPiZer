@@ -7,6 +7,10 @@ inputs:
   scripts:
     description: "Path to the scripts to mount"
     required: true
+  config:
+    description: "Path to an optional config file 'config.local', e.g. to override file system extending/shrinking"
+    required: false
+    default: ''
   environment:
     description: "Additional environment variables to pass to the docker call, as JSON object, e.g. {'OCTOPRINT_VERSION': '1.7.0', 'OTHER_VAR': 'value'}"
     required: false
@@ -18,8 +22,14 @@ runs:
       run: |
         sudo modprobe loop
 
+        config_mount=''
+        if [ -f "${{ inputs.config }}" ]; then
+          config_mount="-v ${{ inputs.config }}:/CustoPiZer/config.local"
+        fi
+
         envs=$(echo '${{ inputs.environment }}' | jq -r 'to_entries | map("-e " + .key + "=" + (.value | tostring)) | join(" ")')
-        command="--rm --privileged $envs -v ${{ inputs.workspace }}:/CustoPiZer/workspace -v ${{ inputs.scripts }}:/CustoPiZer/workspace/scripts ghcr.io/octoprint/custopizer:latest"
+        command="--rm --privileged $envs -v ${{ inputs.workspace }}:/CustoPiZer/workspace -v ${{ inputs.scripts }}:/CustoPiZer/workspace/scripts $config_mount ghcr.io/octoprint/custopizer:latest"
+
         echo "About to execute 'docker run $command'..."
 
         docker run $command
