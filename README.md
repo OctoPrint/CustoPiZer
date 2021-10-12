@@ -45,6 +45,12 @@ EDITBASE_IMAGE_ENLARGEROOT=100
 EDITBASE_IMAGE_RESIZEROOT=20
 ```
 
+This can be achieved through `-v /path/to/config.local:/CustoPiZer/config.local` in the docker command, e.g.
+
+```
+docker run --rm --privileged -v /path/to/workspace:/CustoPiZer/workspace -v /path/to/config.local:/CustoPiZer/config.local ghcr.io/octoprint/custopizer:latest
+```
+
 ### Example
 
 Place this in `workspace/scripts/01-update-octoprint`:
@@ -115,6 +121,18 @@ inside the script context, e.g.:
 > This will fail:
 >
 >     environment: "{ 'OCTOPRINT_VERSION': '${{ env.OCTOPRINT_VERSION }}' }"
+
+If you need to provide a custom `config.local`, e.g. to override filesystem extending/shrinking,
+you can do that via the `config` parameter:
+
+``` yaml
+- name: Run CustoPiZer
+  uses: OctoPrint/CustoPiZer@main
+  with:
+    workspace: "${{ github.workspace }}/build"
+    scripts:  "${{ github.workspace }}/scripts"
+    config: "${{ github.workspace }}/config.local"
+```
 
 For a complex example usage that also includes repository dispatch, creating releases and attaching assets, take a look at the scripts and workflow of [OctoPrint/OctoPi-UpToDate](https://github.com/OctoPrint/OctoPi-UpToDate).
 
