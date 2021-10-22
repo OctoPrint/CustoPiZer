@@ -83,7 +83,7 @@ as the image *will* be changed by you interacting with it, even if only subtly (
 To use, you have to slightly modify the docker call:
 
 ```
-docker run -it --rm --privileged /path/to/image.img:/image.img ghcr.io/octoprint/custopizer:latest /CustoPiZer/enter_image /image.img
+docker run -it --rm --privileged -v /path/to/image.img:/image.img ghcr.io/octoprint/custopizer:latest /CustoPiZer/enter_image /image.img
 ```
 
 ## Running from a GitHub Action
