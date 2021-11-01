@@ -1,7 +1,7 @@
 if [ -f ${DIST_PATH}/config.local ]
 then
   echo "Sourcing distro config.local..."
-  source ${DIST_PATH}/config.local
+  source <(tr -d '\r' < ${DIST_PATH}/config.local)
 fi
 
 ###############################################################################
