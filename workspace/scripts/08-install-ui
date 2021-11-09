@@ -26,5 +26,8 @@ if [ -n "$LEADER" ]; then
 
     # we add another entry to mDNS: pioreactor.local (can be modified in config.ini), and we need the following:
     # see avahi-alias.service for how this works
-    sudo apt install avahi-utils -y
+    sudo apt-get install avahi-utils -y
+
+    # iptables USE to ship with RPi OS, not any more?
+    sudo apt-get install iptables -y
 fi

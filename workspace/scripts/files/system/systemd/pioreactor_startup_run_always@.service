@@ -1,0 +1,15 @@
+[Unit]
+Description=Start up %I on boot. Used for run-always jobs.
+Wants=network-online.target
+After=network-online.target
+After=firstboot.service
+
+[Service]
+User=pi
+ExecStart=pio run-always %I
+Restart=no
+Environment="PATH=/home/pi/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"
+KillMode=none
+
+[Install]
+WantedBy=multi-user.target

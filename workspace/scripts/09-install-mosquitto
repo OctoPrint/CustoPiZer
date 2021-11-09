@@ -19,6 +19,5 @@ if [ -n "$LEADER" ]; then
     grep -qxF 'protocol websockets'    /etc/mosquitto/mosquitto.conf || echo "protocol websockets"   | sudo tee /etc/mosquitto/mosquitto.conf -a
     grep -qxF 'allow_anonymous true'   /etc/mosquitto/mosquitto.conf || echo "allow_anonymous true"   | sudo tee /etc/mosquitto/mosquitto.conf -a
 
-    # start mosquito to publish stuff to it.
-    nohup mosquitto &
+
 fi

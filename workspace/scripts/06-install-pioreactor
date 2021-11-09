@@ -11,15 +11,16 @@ PIO_DIR=/home/pi/.pioreactor
 SOURCE_DIR=/home/pi/pioreactor
 
 
-mkdir -p $PIO_DIR
-mkdir -p $PIO_DIR/storage
-mkdir -p $PIO_DIR/plugins
+
+sudo -u pi mkdir -p $PIO_DIR
+sudo -u pi mkdir -p $PIO_DIR/storage
+sudo -u pi mkdir -p $PIO_DIR/plugins
 
 cd /home/pi/pioreactor
 
 if [ -n "$LEADER" ]; then
     sudo pip3 install -r $SOURCE_DIR/requirements/requirements_leader.txt
-    cp $SOURCE_DIR/config.example.ini $PIO_DIR/config.ini
+    sudo -u pi cp /files/config.example.ini $PIO_DIR/config.ini
 fi
 
 
@@ -28,7 +29,7 @@ if [ -n "$WORKER" ]; then
     sudo apt-get install -y python3-numpy
 
     sudo pip3 install -r $SOURCE_DIR/requirements/requirements_worker.txt
-    touch $PIO_DIR/unit_config.ini
+    sudo -u pi touch $PIO_DIR/unit_config.ini
 fi
 
 sudo python3 setup.py install

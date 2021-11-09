@@ -1,6 +1,7 @@
 [Unit]
 Description=FirstBoot
 Before=rc-local.service
+After=network.target
 ConditionFileNotEmpty=/boot/firstboot.sh
 
 [Service]

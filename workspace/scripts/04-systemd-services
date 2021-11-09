@@ -8,20 +8,20 @@ source /common.sh
 install_cleanup_trap
 
 
-sudo cp /home/pi/pioreactor/system/systemd/pioreactor_startup_run_always@.service /lib/systemd/system/
-sudo cp /home/pi/pioreactor/system/systemd/pioreactor_startup_run@.service /lib/systemd/system/
+sudo cp /files/system/systemd/pioreactor_startup_run_always@.service /lib/systemd/system/
+sudo cp /files/system/systemd/pioreactor_startup_run@.service /lib/systemd/system/
 
 sudo systemctl enable pioreactor_startup_run_always@monitor.service
 
 if [ -n "$LEADER" ]; then
-    sudo cp /home/pi/pioreactor/system/systemd/start_pioreactorui.service /lib/systemd/system/
+    sudo cp /files/system/systemd/start_pioreactorui.service /lib/systemd/system/
     sudo chmod 644 /lib/systemd/system/start_pioreactorui.service #TODO: why chmod?
     sudo systemctl enable start_pioreactorui.service
 
     sudo systemctl enable pioreactor_startup_run_always@watchdog.service
     sudo systemctl enable pioreactor_startup_run_always@mqtt_to_db_streaming.service
 
-    sudo cp /home/pi/pioreactor/system/systemd/avahi-alias.service /lib/systemd/system/
+    sudo cp /files/system/systemd/avahi-alias.service /lib/systemd/system/
     sudo chmod 644 /lib/systemd/system/avahi-alias.service
     sudo systemctl enable avahi-alias.service
 fi

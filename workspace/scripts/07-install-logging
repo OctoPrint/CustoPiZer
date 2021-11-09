@@ -12,5 +12,5 @@ sudo touch /var/log/pioreactor.log
 sudo chown pi /var/log/pioreactor.log
 
 # add a logrotate entry
-sudo cp /home/pi/pioreactor/system/logrotate/pioreactor /etc/logrotate.d/pioreactor
+sudo cp /files/system/logrotate/pioreactor /etc/logrotate.d/pioreactor
 
