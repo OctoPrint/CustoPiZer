@@ -1,0 +1,13 @@
+set -x
+set -e
+
+export LC_ALL=C
+
+
+source /common.sh
+install_cleanup_trap
+
+cp /files/firstboot.service /lib/systemd/system/
+cd /etc/systemd/system/multi-user.target.wants && ln -s /lib/systemd/system/firstboot.service .
+
+cp /files/firstboot.sh /boot

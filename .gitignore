@@ -1,3 +1,3 @@
-src/config.local
-workspace
 .vscode
+*.img
+aptcache
