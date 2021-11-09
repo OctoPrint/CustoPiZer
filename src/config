@@ -34,6 +34,9 @@ fi
 # Arch for now either armv7l, arm64 or aarch64
 [ -n "$EDITBASE_ARCH" ] || EDITBASE_ARCH=armv7l
 
+# output file name
+[ -n "$EDITBASE_OUTPUT_NAME" ] || EDITBASE_OUTPUT_NAME=output.img
+
 
 ###############################################################################
 # Print and export the final configuration.

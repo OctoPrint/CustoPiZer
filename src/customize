@@ -106,10 +106,10 @@ install_fail_on_error_trap
 unmount_image $EDITBASE_MOUNT_PATH force || true
 
 pushd $EDITBASE_WORKSPACE
-  rm output.img || true
+  rm $EDITBASE_OUTPUT_NAME || true
 
-  cp $IMAGE output.img
-  EDITBASE_IMG_PATH=$EDITBASE_WORKSPACE/output.img
+  cp $IMAGE $EDITBASE_OUTPUT_NAME
+  EDITBASE_IMG_PATH=$EDITBASE_WORKSPACE/$EDITBASE_OUTPUT_NAME
 
   if [ -n "$EDITBASE_IMAGE_ENLARGEROOT" ]
   then

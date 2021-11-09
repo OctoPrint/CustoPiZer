@@ -12,5 +12,3 @@ sudo apt-get update
 sudo apt-get install -y git
 sudo apt-get install -y python3-pip
 sudo pip3 install crudini
-
-git clone https://github.com/Pioreactor/pioreactor.git --depth 1 /home/pi/pioreactor
