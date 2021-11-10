@@ -13,7 +13,6 @@ if [ -n "$LEADER" ]; then
     wget -O - https://raw.githubusercontent.com/audstanley/NodeJs-Raspberry-Pi/master/Install-Node.sh | sudo bash
 
     # get latest pioreactorUI code from Github.
-    rm -rf /home/pi/pioreactorui
     git clone https://github.com/Pioreactor/pioreactorui.git /home/pi/pioreactorui  --depth 1
 
     cp /home/pi/pioreactorui/backend/.env.example /home/pi/pioreactorui/backend/.env

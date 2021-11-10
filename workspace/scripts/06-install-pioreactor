@@ -7,9 +7,8 @@ export LC_ALL=C
 source /common.sh
 install_cleanup_trap
 
+
 PIO_DIR=/home/pi/.pioreactor
-
-
 
 sudo -u pi mkdir -p $PIO_DIR
 sudo -u pi mkdir -p $PIO_DIR/storage
@@ -18,7 +17,7 @@ sudo -u pi mkdir -p $PIO_DIR/plugins
 
 if [ -n "$LEADER" ]; then
     sudo -u pi cp /files/config.example.ini $PIO_DIR/config.ini
-    sudo pip3 install 'pioreactor[leader] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl'
+    sudo pip3 install "pioreactor[leader] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl"
 fi
 
 
@@ -26,6 +25,6 @@ fi
 if [ -n "$WORKER" ]; then
     sudo -u pi touch $PIO_DIR/unit_config.ini
     sudo apt-get install -y python3-numpy
-    sudo pip3 install 'pioreactor[worker] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl'
+    sudo pip3 install "pioreactor[worker] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl"
 fi
 

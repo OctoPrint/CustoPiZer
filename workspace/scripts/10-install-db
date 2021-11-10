@@ -9,7 +9,6 @@ install_cleanup_trap
 
 if [ -n "$LEADER" ]; then
 
-
     DB_LOC=/home/pi/.pioreactor/storage/pioreactor.sqlite
 
     sudo apt-get install -y sqlite3
@@ -18,12 +17,10 @@ if [ -n "$LEADER" ]; then
     sqlite3 $DB_LOC < /files/sql/create_tables.sql
     sqlite3 $DB_LOC < /files/sql/seed_initial_experiment.sql
 
-    # techdebt: seed_initial_experiment.sql adds an experiment to the db, so we need to match it in mqtt too
-    # start mosquito to publish stuff to it.
-    # TODO nohup mosquitto &
-    # mosquitto_pub -t "pioreactor/latest_experiment" -m "Demo experiment" -r
 
     # attempt backup database every N days
     # the below overwrites any existing crons
     echo "0 0 */5 * * /usr/local/bin/pio run backup_database" | crontab -
 fi
+
+

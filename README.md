@@ -4,6 +4,7 @@ Modify `input.img`, the unzipped latest Raspberry Pi OS Lite image, with
 
 ```
 docker run --rm --privileged
+    -e PIO_VERSION=21.11.0
     -e LEADER=1
     -e WORKER=1
     -e EDITBASE_OUTPUT_NAME=leader_worker.img
@@ -18,7 +19,7 @@ docker run --rm --privileged
 
 1. How do I update to the image to the latest Pioreactor version?
 
-It's the version is located in the `config.local`.
+Change the arg in the invocation.
 
 2. How do I change the output name?
 
