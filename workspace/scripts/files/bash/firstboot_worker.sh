@@ -6,7 +6,6 @@ set -e
 export LC_ALL=C
 
 
-mkdir /home/pi/.ssh/
-ssh-keygen -q -t rsa -N '' -f /home/pi/.ssh/id_rsa
-cat /home/pi/.ssh/id_rsa.pub > /home/pi/.ssh/authorized_keys
-ssh-keyscan -H $(hostname) >> /home/pi/.ssh/known_hosts
+sudo -u pi ssh-keygen -q -t rsa -N '' -f /home/pi/.ssh/id_rsa
+sudo -u pi cat /home/pi/.ssh/id_rsa.pub > /home/pi/.ssh/authorized_keys
+sudo -u pi ssh-keyscan -H $(hostname) >> /home/pi/.ssh/known_hosts

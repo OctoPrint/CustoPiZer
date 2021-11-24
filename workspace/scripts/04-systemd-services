@@ -14,6 +14,8 @@ sudo cp /files/system/systemd/pioreactor_startup_run@.service /lib/systemd/syste
 sudo systemctl enable pioreactor_startup_run_always@monitor.service
 
 if [ -n "$LEADER" ]; then
+    sudo cp /files/system/systemd/ngrok.service /lib/systemd/system/
+
     sudo cp /files/system/systemd/start_pioreactorui.service /lib/systemd/system/
     sudo chmod 644 /lib/systemd/system/start_pioreactorui.service #TODO: why chmod?
     sudo systemctl enable start_pioreactorui.service
