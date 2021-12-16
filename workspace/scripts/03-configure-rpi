@@ -16,14 +16,18 @@ if [ -n "$WORKER" ]; then
     # assign minimal memory to GPU
     echo "gpu_mem=16"            | sudo tee /boot/config.txt -a
 
-    # disable bluetooth
+    # disable bluetooth, audio, camera and display autodetects
     sudo systemctl disable hciuart
     echo "dtoverlay=disable-bt" | sudo tee -a /boot/config.txt
+    echo "dtparam=audio=off"    | sudo tee -a /boot/config.txt
+    echo "camera_auto_detect=0" | sudo tee -a /boot/config.txt
+    echo "display_auto_detect=0" | sudo tee -a /boot/config.txt
 
     # disable USB. This fails for the RPi Zero and A models, hence the starting "-"" to ignore error
     # TODO: -echo '1-1' |sudo tee /sys/bus/usb/drivers/usb/unbind
 
     # disable HDMI
+    # TODO: I'm not sure this is working in bullseye
     # add to second line of script...
     sudo sed -i '2s/^/\/usr\/bin\/tvservice -o\n/' /etc/rc.local
 
@@ -42,3 +46,7 @@ fi
 # the below will remove swap, which should help extend the life of SD cards:
 # https://raspberrypi.stackexchange.com/questions/169/how-can-i-extend-the-life-of-my-sd-card
 sudo apt-get remove dphys-swapfile -y
+
+# put /tmp into memory, as we write to it a lot.
+echo "tmpfs /tmp tmpfs defaults,noatime 0 0" | sudo tee -a /etc/fstab
+

@@ -13,7 +13,10 @@ PIO_DIR=/home/pi/.pioreactor
 sudo -u pi mkdir -p $PIO_DIR
 sudo -u pi mkdir -p $PIO_DIR/storage
 sudo -u pi mkdir -p $PIO_DIR/plugins
+
 sudo -u pi mkdir -p /home/pi/.ssh/
+sudo -u pi touch /home/pi/.ssh/authorized_keys
+sudo -u pi touch /home/pi/.ssh/known_hosts
 
 
 if [ -n "$LEADER" ]; then

@@ -106,7 +106,7 @@ install_fail_on_error_trap
 unmount_image $EDITBASE_MOUNT_PATH force || true
 
 pushd $EDITBASE_WORKSPACE
-  rm $EDITBASE_OUTPUT_NAME || true
+  rm -rf $EDITBASE_OUTPUT_NAME || true
 
   cp $IMAGE $EDITBASE_OUTPUT_NAME
   EDITBASE_IMG_PATH=$EDITBASE_WORKSPACE/$EDITBASE_OUTPUT_NAME

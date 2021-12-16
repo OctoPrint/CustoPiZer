@@ -12,6 +12,7 @@ sudo -u pi ssh-keygen -q -t rsa -N '' -f /home/pi/.ssh/id_rsa
 sudo -u pi cat /home/pi/.ssh/id_rsa.pub > /home/pi/.ssh/authorized_keys
 sudo -u pi ssh-keyscan -H $(hostname) >> /home/pi/.ssh/known_hosts
 
+
 crudini --set $PIO_DIR/config.ini network.topology leader_hostname $(hostname)
 crudini --set $PIO_DIR/config.ini network.topology leader_address $(hostname).local
 

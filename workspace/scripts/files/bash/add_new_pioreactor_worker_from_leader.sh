@@ -3,7 +3,9 @@
 # (optional) second argument is the new ip of the raspberry pi machine to replace. TODO: this isn't working yet
 
 set -x
+set -e
 export LC_ALL=C
+
 export SSHPASS=raspberry
 
 HOSTNAME=$1
@@ -35,9 +37,9 @@ ssh-keyscan -H $HOSTNAME >> /home/pi/.ssh/known_hosts
 
 # sync-configs
 pios sync-configs --units $HOSTNAME
-
+sleep 2
 
 # reboot once more (previous reboot didn't have config.inis)
-ssh -o StrictHostKeyChecking=no $HOSTNAME 'sudo reboot; exit'
+ssh -o StrictHostKeyChecking=no $HOSTNAME 'sudo reboot;'
 
 exit 0
