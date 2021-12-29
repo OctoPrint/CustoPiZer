@@ -1,0 +1,9 @@
+<?xml version="1.0" standalone='no'?><!--*-nxml-*-->
+<!DOCTYPE service-group SYSTEM "avahi-service.dtd">
+<service-group>
+  <name replace-wildcards="yes">mqtt_on_%h</name>
+  <service>
+    <type>_mqtt._tcp</type>
+    <port>1883</port>
+  </service>
+</service-group>

@@ -3,13 +3,12 @@ CREATE TABLE IF NOT EXISTS od_readings_raw (
     pioreactor_unit        TEXT     NOT NULL,
     od_reading_v           REAL     NOT NULL,
     experiment             TEXT     NOT NULL,
-    angle                  TEXT     NOT NULL,
+    angle                  INTEGER  NOT NULL,
     channel                INTEGER  NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS od_readings_raw_ix
 ON od_readings_raw (experiment);
-
 
 
 CREATE TABLE IF NOT EXISTS alt_media_fraction (

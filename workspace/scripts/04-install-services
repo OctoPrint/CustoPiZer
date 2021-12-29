@@ -7,6 +7,7 @@ export LC_ALL=C
 source /common.sh
 install_cleanup_trap
 
+# systemd services
 
 sudo cp /files/system/systemd/pioreactor_startup_run_always@.service /lib/systemd/system/
 sudo cp /files/system/systemd/pioreactor_startup_run@.service /lib/systemd/system/
@@ -26,5 +27,13 @@ if [ -n "$LEADER" ]; then
     sudo cp /files/system/systemd/avahi-alias.service /lib/systemd/system/
     sudo chmod 644 /lib/systemd/system/avahi-alias.service
     sudo systemctl enable avahi-alias.service
+fi
+
+
+# avahi services
+
+if [ -n "$LEADER" ]; then
+    sudo cp /files/system/avahi/mqtt.service /etc/avahi/services/
+    sudo cp /files/system/avahi/pioreactorui.service /etc/avahi/services/
 fi
 
