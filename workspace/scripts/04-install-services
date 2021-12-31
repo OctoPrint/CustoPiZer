@@ -11,8 +11,10 @@ install_cleanup_trap
 
 sudo cp /files/system/systemd/pioreactor_startup_run_always@.service /lib/systemd/system/
 sudo cp /files/system/systemd/pioreactor_startup_run@.service /lib/systemd/system/
+sudo cp /files/system/systemd/wifi_powersave.service /lib/systemd/system/
 
 sudo systemctl enable pioreactor_startup_run_always@monitor.service
+sudo systemctl enable wifi_powersave.service
 
 if [ -n "$LEADER" ]; then
     sudo cp /files/system/systemd/ngrok.service /lib/systemd/system/

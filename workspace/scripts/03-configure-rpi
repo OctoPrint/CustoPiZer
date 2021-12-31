@@ -27,9 +27,7 @@ if [ -n "$WORKER" ]; then
     # TODO: -echo '1-1' |sudo tee /sys/bus/usb/drivers/usb/unbind
 
     # disable HDMI
-    # TODO: I'm not sure this is working in bullseye
-    # add to second line of script...
-    sudo sed -i '2s/^/\/usr\/bin\/tvservice -o\n/' /etc/rc.local
+    echo "hdmi_blanking=2" | sudo tee -a /boot/config.txt
 
     # remove activelow LED
     # TODO this doesn't work for RPi Zero, https://mlagerberg.gitbooks.io/raspberry-pi/content/5.2-leds.html
