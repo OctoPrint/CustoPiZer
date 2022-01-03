@@ -138,7 +138,7 @@ pushd $EDITBASE_WORKSPACE
     execute_chroot_script "$DIR/start_chroot_script"
 
     copy_files $CUSTOMIZE_SCRIPT_PATH/files
-    for script in $(find $CUSTOMIZE_SCRIPT_PATH -maxdepth 1 -not -type d | sort)
+    for script in $(find $CUSTOMIZE_SCRIPT_PATH -maxdepth 1 -not -type d -not -path '*/\.*' | sort)
     do
         execute_chroot_script "$script"
     done
