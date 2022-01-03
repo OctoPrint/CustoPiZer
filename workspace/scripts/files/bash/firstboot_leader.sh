@@ -20,3 +20,9 @@ crudini --set $PIO_DIR/config.ini network.topology leader_address $(hostname).lo
 # this happens in firstboot and not in the image because mqtt will only save to disk every 5m, so it's
 # never stored on the image. However, from docs:
 mosquitto_pub -t "pioreactor/latest_experiment" -m "Demo experiment" -r
+
+
+# we need to alias pioreactor.local to leader's hostname at boot, otherwise we run instead
+# avahi-publish -a -R pioreactor.local 127.0.0.1
+# since that's the IP address when the image is hosted.
+sudo systemctl restart avahi-alias.service

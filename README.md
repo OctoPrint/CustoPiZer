@@ -1,18 +1,17 @@
 # CustoPiZer for Pioreactor
 
-Modify `input.img`, the unzipped latest Raspberry Pi OS Lite image, with
 
 ```
 docker run --rm --privileged \
     -e PIO_VERSION=21.11.1  \
     -e LEADER=1\
     -e WORKER=1\
-    -e EDITBASE_OUTPUT_NAME=leader_worker.img\
     -v /path/to/workspace:/CustoPiZer/workspace/\
     -v /path/to/config.local:/CustoPiZer/config.local\
-    ghcr.io/octoprint/custopizer:latest
+    ghcr.io/octoprint/custopizer:latest \
+    && mv output.img pioreactor_leader_worker.img
+    && zip workspace/pioreactor_leader_worker.img.zip workspace/pioreactor_leader_worker.img
 ```
-
 
 
 ### FAQ
