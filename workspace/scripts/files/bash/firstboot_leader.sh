@@ -26,3 +26,9 @@ mosquitto_pub -t "pioreactor/latest_experiment" -m "Demo experiment" -r
 # avahi-publish -a -R pioreactor.local 127.0.0.1
 # since that's the IP address when the image is hosted.
 sudo systemctl restart avahi-alias.service
+
+
+# attempt backup database every N days
+# the below overwrites any existing crons
+# this doesn't persist if preinstalled on the image.
+echo "0 0 */5 * * /usr/local/bin/pio run backup_database" | crontab -

@@ -17,10 +17,6 @@ if [ -n "$LEADER" ]; then
     sqlite3 $DB_LOC < /files/sql/create_tables.sql
     sqlite3 $DB_LOC < /files/sql/seed_initial_experiment.sql
 
-
-    # attempt backup database every N days
-    # the below overwrites any existing crons
-    echo "0 0 */5 * * /usr/local/bin/pio run backup_database" | crontab -
 fi
 
 
