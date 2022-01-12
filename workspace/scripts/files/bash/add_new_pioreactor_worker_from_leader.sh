@@ -1,6 +1,9 @@
 #!/bin/bash
+# this script "connects" the leader to the worker. It's possible (I think, because this appends to worker files),
+# for more than one leader to "connect" to the
+# same worker, so the worker can be used in multiple clusters.
 # first argument is the hostname of the new pioreactor worker
-# (optional) second argument is the new ip of the raspberry pi machine to replace. TODO: this isn't working yet
+# TODO: make the second argument the required password
 
 set -x
 set -e

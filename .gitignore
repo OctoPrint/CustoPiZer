@@ -1,3 +1,4 @@
 .vscode
 *.img
 aptcache
+*.img.zip
