@@ -21,12 +21,14 @@ ssh-keygen -R $(host $HOSTNAME | awk '/has address/ { print $4 ; exit }')       
 
 
 # allow us to SSH in, but make sure we can first before continuing.
-while ! sshpass -e ssh -o StrictHostKeyChecking=no $HOSTNAME "true"
-    do echo "SSH to $HOSTNAME missed - `date`"
+# check we have .pioreactor folder to confirm the device has the pioreactor image
+while ! sshpass -e ssh $HOSTNAME "test -d /home/pi/.pioreactor && echo 'exists'"
+    do echo "Connection to $HOSTNAME missed - `date`"
     sleep 2
 done
 
-cat ~/.ssh/id_rsa.pub | sshpass -e ssh -o StrictHostKeyChecking=no $HOSTNAME 'cat >> .ssh/authorized_keys'
+# copy public key over
+sshpass -e ssh-copy-id $HOSTNAME
 
 # remove any existing config (for idempotent)
 # we do this first so the user can see it on the Pioreactors/ page
@@ -36,13 +38,20 @@ echo -e "# Any settings here are specific to $HOSTNAME, and override the setting
 crudini --set /home/pi/.pioreactor/config.ini network.inventory $HOSTNAME 1
 
 # add to known hosts
-ssh-keyscan -H $HOSTNAME >> /home/pi/.ssh/known_hosts
+ssh-keyscan $HOSTNAME >> /home/pi/.ssh/known_hosts
 
 # sync-configs
 pios sync-configs --units $HOSTNAME
 sleep 2
 
+# check we have config.ini file to confirm the device has the necessary configuration
+while ! sshpass -e ssh $HOSTNAME "test -d /home/pi/.pioreactor/config.ini && echo 'exists'"
+    do echo "Looking for config.ini - `date`"
+    sleep 2
+done
+
+
 # reboot once more (previous reboot didn't have config.inis)
-ssh -o StrictHostKeyChecking=no $HOSTNAME 'sudo reboot;'
+ssh $HOSTNAME 'sudo reboot;'
 
 exit 0
