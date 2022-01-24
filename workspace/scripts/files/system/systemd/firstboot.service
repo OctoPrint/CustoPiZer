@@ -1,5 +1,5 @@
 [Unit]
-Description=FirstBoot
+Description=Runs firstboot.sh on the first boot of the Raspberry Pi. It will modify itself to not run again.
 Before=rc-local.service
 After=network.target
 ConditionFileNotEmpty=/boot/firstboot.sh
