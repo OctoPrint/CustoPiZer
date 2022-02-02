@@ -9,9 +9,9 @@ export LC_ALL=C
 PIO_DIR=/home/pi/.pioreactor
 SSH_DIR=/home/pi/.ssh
 
-sudo -u pi rm -rf SSH_DIR # remove if already exists.
+sudo -u pi rm -rf $SSH_DIR # remove if already exists.
 
-sudo -u pi mkdir -p SSH_DIR
+sudo -u pi mkdir -p $SSH_DIR
 sudo -u pi touch SSH_DIR/authorized_keys
 sudo -u pi touch SSH_DIR/known_hosts
 

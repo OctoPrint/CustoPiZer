@@ -9,17 +9,17 @@ export LC_ALL=C
 PIO_DIR=/home/pi/.pioreactor
 SSH_DIR=/home/pi/.ssh
 
-sudo -u pi rm -rf SSH_DIR # remove if already exists.
+sudo -u pi rm -rf $SSH_DIR # remove if already exists.
 
 
-sudo -u pi mkdir -p SSH_DIR
-sudo -u pi touch SSH_DIR/authorized_keys
-sudo -u pi touch SSH_DIR/known_hosts
+sudo -u pi mkdir -p $SSH_DIR
+sudo -u pi touch $SSH_DIR/authorized_keys
+sudo -u pi touch $SSH_DIR/known_hosts
 
-sudo -u pi ssh-keygen -q -t rsa -N '' -f SSH_DIR/id_rsa
-sudo -u pi cat SSH_DIR/id_rsa.pub > SSH_DIR/authorized_keys
-sudo -u pi ssh-keyscan $(hostname) >> SSH_DIR/known_hosts
-sudo -u pi echo "StrictHostKeyChecking accept-new" >> ~/.ssh/config
+sudo -u pi ssh-keygen -q -t rsa -N '' -f $SSH_DIR/id_rsa
+sudo -u pi cat $SSH_DIR/id_rsa.pub > $SSH_DIR/authorized_keys
+sudo -u pi ssh-keyscan $(hostname) >> $SSH_DIR/known_hosts
+sudo -u pi echo "StrictHostKeyChecking accept-new" >> $SSH_DIR/config
 
 
 crudini --set $PIO_DIR/config.ini network.topology leader_hostname $(hostname)
