@@ -45,7 +45,7 @@ pios sync-configs --units $HOSTNAME
 sleep 2
 
 # check we have config.ini file to confirm the device has the necessary configuration
-while ! sshpass -e ssh $HOSTNAME "test -d /home/pi/.pioreactor/config.ini && echo 'exists'"
+while ! sshpass -e ssh $HOSTNAME "test -f /home/pi/.pioreactor/config.ini && echo 'exists'"
     do echo "Looking for config.ini - `date`"
     sleep 2
 done
