@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS dosing_automation_settings (
     experiment               TEXT  NOT NULL,
     started_at               TEXT  NOT NULL,
     ended_at                 TEXT,
-    automation               TEXT  NOT NULL,
+    automation_name          TEXT  NOT NULL,
     settings                 TEXT  NOT NULL
 );
 
@@ -114,7 +114,7 @@ CREATE TABLE IF NOT EXISTS led_automation_settings (
     experiment               TEXT NOT NULL,
     started_at               TEXT NOT NULL,
     ended_at                 TEXT,
-    automation               TEXT NOT NULL,
+    automation_name          TEXT NOT NULL,
     settings                 TEXT NOT NULL
 );
 
@@ -125,7 +125,7 @@ CREATE TABLE IF NOT EXISTS temperature_automation_settings (
     experiment               TEXT NOT NULL,
     started_at               TEXT NOT NULL,
     ended_at                 TEXT,
-    automation               TEXT NOT NULL,
+    automation_name          TEXT NOT NULL,
     settings                 TEXT NOT NULL
 );
 
@@ -176,3 +176,12 @@ CREATE TABLE IF NOT EXISTS od_blanks (
     channel                  TEXT NOT NULL,
     od_reading_v             REAL NOT NULL
 );
+
+
+CREATE TABLE IF NOT EXISTS ir_led_intensity (
+    timestamp                TEXT NOT NULL,
+    pioreactor_unit          TEXT NOT NULL,
+    experiment               TEXT NOT NULL,
+    relative_intensity       REAL NOT NULL
+);
+

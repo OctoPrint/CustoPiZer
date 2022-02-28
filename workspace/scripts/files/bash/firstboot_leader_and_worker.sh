@@ -37,7 +37,7 @@ mosquitto_pub -t "pioreactor/latest_experiment" -m "Demo experiment" -r
 echo "0 0 */5 * * /usr/local/bin/pio run backup_database" | crontab -
 
 
-touch $PIO_DIR/config_$(hostname).ini
+sudo -u pi touch $PIO_DIR/config_$(hostname).ini # set with the correct read/write permissions
 printf "# Any settings here are specific to $(hostname), and override the settings in config.ini\n\n" >> $PIO_DIR/config_$(hostname).ini
 cp $PIO_DIR/config_$(hostname).ini $PIO_DIR/unit_config.ini
 crudini --set $PIO_DIR/config.ini network.inventory $(hostname) 1
