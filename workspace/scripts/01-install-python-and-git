@@ -11,4 +11,5 @@ install_cleanup_trap
 sudo apt-get update
 sudo apt-get install -y git
 sudo apt-get install -y python3-pip
+sudo pip3 install pip -U  # update to latest pip
 
