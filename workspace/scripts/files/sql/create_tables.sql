@@ -11,7 +11,7 @@ CREATE INDEX IF NOT EXISTS od_readings_raw_ix
 ON od_readings_raw (experiment);
 
 
-CREATE TABLE IF NOT EXISTS alt_media_fraction (
+CREATE TABLE IF NOT EXISTS alt_media_fractions (
     timestamp              TEXT  NOT NULL,
     pioreactor_unit        TEXT  NOT NULL,
     alt_media_fraction     REAL  NOT NULL,
@@ -87,7 +87,9 @@ ON logs (experiment, level, task);
 CREATE TABLE IF NOT EXISTS experiments (
     experiment             TEXT  NOT NULL UNIQUE,
     timestamp              TEXT  NOT NULL,
-    description            TEXT
+    description            TEXT,
+    media_used             TEXT,
+    organism_used          TEXT
 );
 
 -- since we are almost always calling this like "SELECT * FROM experiments ORDER BY timestamp DESC LIMIT 1",
@@ -96,6 +98,8 @@ CREATE TABLE IF NOT EXISTS experiments (
 -- https://medium.com/@JasonWyatt/squeezing-performance-from-sqlite-indexes-indexes-c4e175f3c346
 CREATE INDEX IF NOT EXISTS experiments_ix ON experiments (timestamp, experiment, description);
 
+
+CREATE VIEW IF NOT EXISTS latest_experiment AS SELECT experiment, timestamp, description, media_used, organism_used, round( (strftime("%s","now") - strftime("%s", timestamp))/60/60, 0) as delta_hours FROM experiments ORDER BY timestamp DESC LIMIT 1;
 
 
 CREATE TABLE IF NOT EXISTS dosing_automation_settings (
@@ -115,7 +119,7 @@ CREATE TABLE IF NOT EXISTS led_automation_settings (
     started_at               TEXT NOT NULL,
     ended_at                 TEXT,
     automation_name          TEXT NOT NULL,
-    settings                 TEXT NOT NULL
+    settings                 TETX NOT NULL
 );
 
 
@@ -178,10 +182,18 @@ CREATE TABLE IF NOT EXISTS od_blanks (
 );
 
 
-CREATE TABLE IF NOT EXISTS ir_led_intensity (
+CREATE TABLE IF NOT EXISTS ir_led_intensities (
     timestamp                TEXT NOT NULL,
     pioreactor_unit          TEXT NOT NULL,
     experiment               TEXT NOT NULL,
     relative_intensity       REAL NOT NULL
+);
+
+
+CREATE TABLE IF NOT EXISTS pioreactor_unit_labels (
+    pioreactor_unit          TEXT NOT NULL,
+    experiment               TEXT NOT NULL,
+    label                    TEXT NOT NULL,
+    UNIQUE(pioreactor_unit, experiment)
 );
 

@@ -5,21 +5,21 @@ set -e
 
 export LC_ALL=C
 
-
+USERNAME=pioreactor
 PIO_DIR=/home/pi/.pioreactor
 SSH_DIR=/home/pi/.ssh
 
-sudo -u pi rm -rf $SSH_DIR # remove if already exists.
+sudo -u $USERNAME rm -rf $SSH_DIR # remove if already exists.
 
 
-sudo -u pi mkdir -p $SSH_DIR
-sudo -u pi touch $SSH_DIR/authorized_keys
-sudo -u pi touch $SSH_DIR/known_hosts
+sudo -u $USERNAME mkdir -p $SSH_DIR
+sudo -u $USERNAME touch $SSH_DIR/authorized_keys
+sudo -u $USERNAME touch $SSH_DIR/known_hosts
 
-sudo -u pi ssh-keygen -q -t rsa -N '' -f $SSH_DIR/id_rsa
-sudo -u pi cat $SSH_DIR/id_rsa.pub > $SSH_DIR/authorized_keys
-sudo -u pi ssh-keyscan $(hostname) >> $SSH_DIR/known_hosts
-sudo -u pi echo "StrictHostKeyChecking accept-new" >> $SSH_DIR/config
+sudo -u $USERNAME ssh-keygen -q -t rsa -N '' -f $SSH_DIR/id_rsa
+sudo -u $USERNAME cat $SSH_DIR/id_rsa.pub > $SSH_DIR/authorized_keys
+sudo -u $USERNAME ssh-keyscan $(hostname) >> $SSH_DIR/known_hosts
+sudo -u $USERNAME echo "StrictHostKeyChecking accept-new" >> $SSH_DIR/config
 
 
 crudini --set $PIO_DIR/config.ini network.topology leader_hostname $(hostname)
@@ -37,7 +37,7 @@ mosquitto_pub -t "pioreactor/latest_experiment" -m "Demo experiment" -r
 echo "0 0 */5 * * /usr/local/bin/pio run backup_database" | crontab -
 
 
-sudo -u pi touch $PIO_DIR/config_$(hostname).ini # set with the correct read/write permissions
+sudo -u $USERNAME touch $PIO_DIR/config_$(hostname).ini # set with the correct read/write permissions
 printf "# Any settings here are specific to $(hostname), and override the settings in config.ini\n\n" >> $PIO_DIR/config_$(hostname).ini
 cp $PIO_DIR/config_$(hostname).ini $PIO_DIR/unit_config.ini
 crudini --set $PIO_DIR/config.ini network.inventory $(hostname) 1
