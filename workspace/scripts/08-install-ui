@@ -6,10 +6,10 @@ export LC_ALL=C
 
 source /common.sh
 install_cleanup_trap
-USERNAME=pioreactor
+
 UI_FOLDER=/home/$USERNAME/pioreactorui
 
-if [ "$LEADER" == "1"]; then
+if [ "$LEADER" == "1" ]; then
     # install NPM and Node
     wget -O - https://raw.githubusercontent.com/audstanley/NodeJs-Raspberry-Pi/master/Install-Node.sh | sudo bash
 

@@ -13,10 +13,10 @@ cp /files/system/systemd/firstboot.service /lib/systemd/system/
 cd /etc/systemd/system/multi-user.target.wants && ln -s /lib/systemd/system/firstboot.service .
 
 
-if [ "$LEADER" == "1"] && [ "$WORKER" == "1"]; then
+if [ "$LEADER" == "1" ] && [ "$WORKER" == "1" ]; then
     cp /files/bash/firstboot_leader_and_worker.sh /boot/firstboot.sh
-elif [ "$LEADER" == "1"]; then
+elif [ "$LEADER" == "1" ]; then
     cp /files/bash/firstboot_leader.sh /boot/firstboot.sh
-elif [ "$WORKER" == "1"]; then
+elif [ "$WORKER" == "1" ]; then
     cp /files/bash/firstboot_worker.sh /boot/firstboot.sh
 fi

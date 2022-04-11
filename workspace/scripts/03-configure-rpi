@@ -7,7 +7,7 @@ export LC_ALL=C
 source /common.sh
 install_cleanup_trap
 
-if [ "$WORKER" == "1"]; then
+if [ "$WORKER" == "1" ]; then
 
     ######################################################################
     # Optimize power consumption of Rpi - mostly turn off peripherals
