@@ -8,7 +8,7 @@ source /common.sh
 install_cleanup_trap
 
 
-if [ -n "$LEADER" ]; then
+if [ "$LEADER" == "1" ]; then
     cp /files/bash/add_new_pioreactor_worker_from_leader.sh /usr/local/bin/
 fi
 

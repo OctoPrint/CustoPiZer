@@ -7,20 +7,21 @@ export LC_ALL=C
 source /common.sh
 install_cleanup_trap
 
+UI_FOLDER=/home/$USERNAME/pioreactorui
 
-if [ -n "$LEADER" ]; then
+if [ "$LEADER" == "1" ]; then
     # install NPM and Node
     wget -O - https://raw.githubusercontent.com/audstanley/NodeJs-Raspberry-Pi/master/Install-Node.sh | sudo bash
 
     # get latest pioreactorUI code from Github.
-    sudo -u pi git clone https://github.com/Pioreactor/pioreactorui.git /home/pi/pioreactorui  --depth 1
+    sudo -u pi git clone https://github.com/Pioreactor/pioreactorui.git $UI_FOLDER  --depth 1
 
-    cp /home/pi/pioreactorui/backend/.env.example /home/pi/pioreactorui/backend/.env
+    cp $UI_FOLDER/backend/.env.example $UI_FOLDER/backend/.env
 
     # install required libraries for backend
     # TODO: fix npm6, hitting this issue https://github.com/npm/cli/issues/3577
     npm install -g npm@6
-    sudo npm --prefix /home/pi/pioreactorui/backend install
+    sudo npm --prefix $UI_FOLDER/backend install
     sudo npm install pm2@5.1.0 -g
 
     # we add another entry to mDNS: pioreactor.local (can be modified in config.ini), and we need the following:

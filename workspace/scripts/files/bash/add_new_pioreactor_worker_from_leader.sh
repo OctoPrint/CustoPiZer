@@ -13,6 +13,7 @@ export SSHPASS=raspberry
 
 HOSTNAME=$1
 
+USERNAME=pioreactor
 
 # remove from known_hosts if already present
 ssh-keygen -R $HOSTNAME.local                                                       >/dev/null 2>&1
@@ -22,7 +23,7 @@ ssh-keygen -R $(host $HOSTNAME | awk '/has address/ { print $4 ; exit }')       
 
 # allow us to SSH in, but make sure we can first before continuing.
 # check we have .pioreactor folder to confirm the device has the pioreactor image
-while ! sshpass -e ssh $HOSTNAME "test -d /home/pi/.pioreactor && echo 'exists'"
+while ! sshpass -e ssh $HOSTNAME "test -d /home/$USERNAME/.pioreactor && echo 'exists'"
     do echo "Connection to $HOSTNAME missed - `date`"
     sleep 2
 done
@@ -32,20 +33,20 @@ sshpass -e ssh-copy-id $HOSTNAME
 
 # remove any existing config (for idempotent)
 # we do this first so the user can see it on the Pioreactors/ page
-rm -f /home/pi/.pioreactor/config_$HOSTNAME.ini
-touch /home/pi/.pioreactor/config_$HOSTNAME.ini
-echo -e "# Any settings here are specific to $HOSTNAME, and override the settings in shared config.ini" >> /home/pi/.pioreactor/config_$HOSTNAME.ini
-crudini --set /home/pi/.pioreactor/config.ini network.inventory $HOSTNAME 1
+rm -f /home/$USERNAME/.pioreactor/config_$HOSTNAME.ini
+touch /home/$USERNAME/.pioreactor/config_$HOSTNAME.ini
+echo -e "# Any settings here are specific to $HOSTNAME, and override the settings in shared config.ini" >> /home/$USERNAME/.pioreactor/config_$HOSTNAME.ini
+crudini --set /home/$USERNAME/.pioreactor/config.ini network.inventory $HOSTNAME 1
 
 # add to known hosts
-ssh-keyscan $HOSTNAME >> /home/pi/.ssh/known_hosts
+ssh-keyscan $HOSTNAME >> /home/$USERNAME/.ssh/known_hosts
 
 # sync-configs
 pios sync-configs --units $HOSTNAME
 sleep 2
 
 # check we have config.ini file to confirm the device has the necessary configuration
-while ! sshpass -e ssh $HOSTNAME "test -f /home/pi/.pioreactor/config.ini && echo 'exists'"
+while ! sshpass -e ssh $HOSTNAME "test -f /home/$USERNAME/.pioreactor/config.ini && echo 'exists'"
     do echo "Looking for config.ini - `date`"
     sleep 2
 done

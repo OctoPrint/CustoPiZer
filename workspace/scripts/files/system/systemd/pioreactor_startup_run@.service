@@ -5,10 +5,10 @@ After=network-online.target
 After=firstboot.service
 
 [Service]
-User=pi
+User=pioreactor
 ExecStart=pio run %I
 Restart=no
-Environment="PATH=/home/pi/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"
+Environment="PATH=/home/pioreactor/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"
 KillMode=none
 
 [Install]
