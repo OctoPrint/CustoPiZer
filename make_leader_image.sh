@@ -4,11 +4,15 @@
 
 GIT_COMMIT="$(git show --format="%h" --no-patch)"
 
+OUTPUT=pioreactor_leader.img.zip
+
+rm -f workspace/$OUTPUT
+
 docker run --rm --privileged \
     -e PIO_VERSION=$1 \
     -e CUSTOPIZER_GIT_COMMIT=GIT_COMMIT \
     -e WORKER=0 \
     -e LEADER=1 \
     -v /Users/camerondavidson-pilon/code/CustoPiZer/workspace:/CustoPiZer/workspace/  -v /Users/camerondavidson-pilon/code/CustoPiZer/config.local:/CustoPiZer/config.local ghcr.io/octoprint/custopizer:latest \
- && zip workspace/pioreactor_leader.img.zip workspace/output.img \
+ && (cd workspace/; zip $OUTPUT output.img) \
  && rm workspace/output.img

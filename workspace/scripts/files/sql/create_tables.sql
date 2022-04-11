@@ -18,8 +18,8 @@ CREATE TABLE IF NOT EXISTS alt_media_fractions (
     experiment             TEXT  NOT NULL
 );
 
-CREATE INDEX IF NOT EXISTS alt_media_fraction_ix
-ON alt_media_fraction (experiment);
+CREATE INDEX IF NOT EXISTS alt_media_fractions_ix
+ON alt_media_fractions (experiment);
 
 
 

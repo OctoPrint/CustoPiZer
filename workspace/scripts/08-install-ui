@@ -7,6 +7,7 @@ export LC_ALL=C
 source /common.sh
 install_cleanup_trap
 
+USERNAME=pioreactor
 UI_FOLDER=/home/$USERNAME/pioreactorui
 
 if [ "$LEADER" == "1" ]; then
@@ -14,7 +15,7 @@ if [ "$LEADER" == "1" ]; then
     wget -O - https://raw.githubusercontent.com/audstanley/NodeJs-Raspberry-Pi/master/Install-Node.sh | sudo bash
 
     # get latest pioreactorUI code from Github.
-    sudo -u pi git clone https://github.com/Pioreactor/pioreactorui.git $UI_FOLDER  --depth 1
+    sudo -u $USERNAME git clone https://github.com/Pioreactor/pioreactorui.git $UI_FOLDER  --depth 1
 
     cp $UI_FOLDER/backend/.env.example $UI_FOLDER/backend/.env
 
