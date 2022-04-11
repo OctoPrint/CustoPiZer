@@ -16,7 +16,7 @@ sudo -u $USERNAME mkdir -p $PIO_DIR/plugins
 
 sudo pip3 install crudini
 
-if [ -n "$LEADER" ]; then
+if [ "$LEADER" == "1"]; then
     sudo apt-get install sshpass
     sudo -u $USERNAME cp /files/config.example.ini $PIO_DIR/config.ini
     sudo pip3 install --ignore-installed "pioreactor[leader] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl"
@@ -24,7 +24,7 @@ fi
 
 
 
-if [ -n "$WORKER" ]; then
+if [ "$WORKER" == "1" ]; then
     sudo -u $USERNAME touch $PIO_DIR/unit_config.ini
     sudo apt-get install -y python3-numpy
     sudo pip3 install --ignore-installed "pioreactor[worker] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl"

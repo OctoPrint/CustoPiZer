@@ -9,12 +9,12 @@ source /common.sh
 install_cleanup_trap
 
 
-if [ -n "$LEADER" ]; then
+if [ "$LEADER" == "1"]; then
     sudo pip3 install "pioreactor[leader] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl"
 fi
 
 
 
-if [ -n "$WORKER" ]; then
+if [ "$WORKER" == "1"]; then
     sudo pip3 install "pioreactor[worker] @ https://github.com/Pioreactor/pioreactor/releases/download/$PIO_VERSION/pioreactor-$PIO_VERSION-py3-none-any.whl"
 fi

@@ -17,7 +17,7 @@ sudo systemctl enable pioreactor_startup_run_always@monitor.service
 # systemd: remove wifi powersave - helps with mdns discovery
 sudo systemctl enable wifi_powersave.service
 
-if [ -n "$LEADER" ]; then
+if [ "$LEADER" == "1" ]; then
     sudo cp /files/system/systemd/ngrok.service /lib/systemd/system/
 
     # systemd: web UI
