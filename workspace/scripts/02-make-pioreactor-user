@@ -12,3 +12,6 @@ password=raspberry
 
 adduser --gecos "" --disabled-password $username
 chpasswd <<<"$username:$password"
+usermod -a -G gpio $username
+usermod -a -G spi $username
+usermod -a -G i2c $username
