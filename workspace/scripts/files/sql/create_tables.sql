@@ -119,7 +119,7 @@ CREATE TABLE IF NOT EXISTS led_automation_settings (
     started_at               TEXT NOT NULL,
     ended_at                 TEXT,
     automation_name          TEXT NOT NULL,
-    settings                 TETX NOT NULL
+    settings                 TEXT NOT NULL
 );
 
 
