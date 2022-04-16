@@ -1,0 +1,9 @@
+[Unit]
+Description=Start local access point using RaspAP
+
+[Service]
+Type=simple
+ExecStart=/boot/conditionally_start_raspap.sh
+
+[Install]
+WantedBy=multi-user.target

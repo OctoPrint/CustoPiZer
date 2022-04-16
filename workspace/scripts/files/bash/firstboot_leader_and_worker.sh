@@ -6,8 +6,8 @@ set -e
 export LC_ALL=C
 
 USERNAME=pioreactor
-PIO_DIR=/home/pi/.pioreactor
-SSH_DIR=/home/pi/.ssh
+PIO_DIR=/home/$USERNAME/.pioreactor
+SSH_DIR=/home/$USERNAME/.ssh
 
 sudo -u $USERNAME rm -rf $SSH_DIR # remove if already exists.
 

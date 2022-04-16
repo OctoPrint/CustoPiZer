@@ -9,20 +9,22 @@ install_cleanup_trap
 
 # systemd: add long running pioreactor jobs
 
-sudo cp /files/system/systemd/pioreactor_startup_run_always@.service /lib/systemd/system/
-sudo cp /files/system/systemd/pioreactor_startup_run@.service /lib/systemd/system/
-sudo cp /files/system/systemd/wifi_powersave.service /lib/systemd/system/
+SYSTEM_DIR=/lib/systemd/system/
+
+sudo cp /files/system/systemd/pioreactor_startup_run_always@.service $SYSTEM_DIR
+sudo cp /files/system/systemd/pioreactor_startup_run@.service $SYSTEM_DIR
+sudo cp /files/system/systemd/wifi_powersave.service $SYSTEM_DIR
 sudo systemctl enable pioreactor_startup_run_always@monitor.service
 
 # systemd: remove wifi powersave - helps with mdns discovery
 sudo systemctl enable wifi_powersave.service
 
 if [ "$LEADER" == "1" ]; then
-    sudo cp /files/system/systemd/ngrok.service /lib/systemd/system/
+    sudo cp /files/system/systemd/ngrok.service $SYSTEM_DIR
 
     # systemd: web UI
-    sudo cp /files/system/systemd/start_pioreactorui.service /lib/systemd/system/
-    sudo chmod 644 /lib/systemd/system/start_pioreactorui.service #TODO: why chmod?
+    sudo cp /files/system/systemd/start_pioreactorui.service $SYSTEM_DIR
+    sudo chmod 644 $SYSTEM_DIRstart_pioreactorui.service #TODO: why chmod?
     sudo systemctl enable start_pioreactorui.service
 
     # systemd: add long running pioreactor jobs
@@ -30,13 +32,18 @@ if [ "$LEADER" == "1" ]; then
     sudo systemctl enable pioreactor_startup_run_always@mqtt_to_db_streaming.service
 
     # systemd: alias hostname to pioreactor.local
-    sudo cp /files/system/systemd/avahi-alias.service /lib/systemd/system/
-    sudo chmod 644 /lib/systemd/system/avahi-alias.service
+    sudo cp /files/system/systemd/avahi-alias.service $SYSTEM_DIR
+    sudo chmod 644 $SYSTEM_DIRavahi-alias.service
     sudo systemctl enable avahi-alias.service
 
     # add avahi services
     sudo cp /files/system/avahi/mqtt.service /etc/avahi/services/
     sudo cp /files/system/avahi/pioreactorui.service /etc/avahi/services/
+
+    # install raspap service check
+    sudo cp /files/system/systemd/conditionally_start_raspap.service $SYSTEM_DIR
+    sudo systemctl enable conditionally_start_raspap.service
+    cp /files/bash/conditionally_start_raspap.sh /boot/conditionally_start_raspap.sh
 fi
 
 
