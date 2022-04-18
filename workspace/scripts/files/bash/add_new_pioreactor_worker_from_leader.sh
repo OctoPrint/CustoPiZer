@@ -53,6 +53,6 @@ done
 
 
 # reboot once more (previous reboot didn't have config.inis)
-ssh $HOSping TNAME 'sudo reboot;'
+ssh $HOSTNAME 'sudo reboot;'
 
 exit 0

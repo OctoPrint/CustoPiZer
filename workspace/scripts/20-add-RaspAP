@@ -20,7 +20,7 @@ if [ "$LEADER" == "1" ]; then
     sed -i "s/wpa_passphrase=ChangeMe/wpa_passphrase=raspberry/" /etc/hostapd/hostapd.conf
 
     # turn off by default. It's turned on by conditionally_start_raspap.sh, which is called by a service on boot.
-    # TODO: hostapg, php still have services that start on boot.
     sudo systemctl disable raspapd.service
+    sudo systemctl disable hostapd.service
 
 fi
