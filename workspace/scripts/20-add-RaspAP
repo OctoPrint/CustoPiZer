@@ -9,7 +9,8 @@ install_cleanup_trap
 
 if [ "$LEADER" == "1" ]; then
 
-    curl -sL https://install.raspap.com | bash -s -- --yes --openvpn 0 --adblock 0
+    # curl -sL https://install.raspap.com ``> raspap.sh
+    bash /files/bash/raspian.sh --yes --openvpn 0 --adblock 0
 
     # change port of webserver to not conflict with pioreactor.local
     sed -i "s/server.port                 = 80/server.port                 = 8080/" /etc/lighttpd/lighttpd.conf

@@ -12,11 +12,10 @@ install_cleanup_trap
 SYSTEM_DIR=/lib/systemd/system/
 
 sudo cp /files/system/systemd/pioreactor_startup_run_always@.service $SYSTEM_DIR
-sudo cp /files/system/systemd/pioreactor_startup_run@.service $SYSTEM_DIR
-sudo cp /files/system/systemd/wifi_powersave.service $SYSTEM_DIR
 sudo systemctl enable pioreactor_startup_run_always@monitor.service
 
 # systemd: remove wifi powersave - helps with mdns discovery
+sudo cp /files/system/systemd/wifi_powersave.service $SYSTEM_DIR
 sudo systemctl enable wifi_powersave.service
 
 if [ "$LEADER" == "1" ]; then
@@ -24,7 +23,6 @@ if [ "$LEADER" == "1" ]; then
 
     # systemd: web UI
     sudo cp /files/system/systemd/start_pioreactorui.service $SYSTEM_DIR
-    sudo chmod 644 $SYSTEM_DIRstart_pioreactorui.service #TODO: why chmod?
     sudo systemctl enable start_pioreactorui.service
 
     # systemd: add long running pioreactor jobs
@@ -33,7 +31,6 @@ if [ "$LEADER" == "1" ]; then
 
     # systemd: alias hostname to pioreactor.local
     sudo cp /files/system/systemd/avahi-alias.service $SYSTEM_DIR
-    sudo chmod 644 $SYSTEM_DIRavahi-alias.service
     sudo systemctl enable avahi-alias.service
 
     # add avahi services
