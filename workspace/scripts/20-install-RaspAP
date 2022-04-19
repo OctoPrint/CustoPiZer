@@ -14,11 +14,15 @@ function swap()
     mv "$1" $TMPFILE && mv "$2" "$1" && mv $TMPFILE "$2"
 }
 
+INSTALLER=https://raw.githubusercontent.com/Pioreactor/raspap-webgui/master/installers/raspbian.sh
+
 
 if [ "$LEADER" == "1" ]; then
 
-    # curl -sL https://install.raspap.com ``> raspap.sh
-    bash /files/bash/raspian.sh --yes --openvpn 0 --adblock 0
+    # we modified the installer slightly to work with qemu. It's possible we
+    # don't need the --repo flag, and can use the official repo.
+    # OTOH, this freezes versions, etc.
+    curl -sL $INSTALLER | bash -s -- --yes --openvpn 0 --adblock 0 --repo Pioreactor/raspap-webgui
 
     # change port of webserver to not conflict with pioreactor.local
     sed -i "s/server.port                 = 80/server.port                 = 8080/" /etc/lighttpd/lighttpd.conf
