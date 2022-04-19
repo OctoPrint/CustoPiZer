@@ -20,7 +20,7 @@ function swap()
 
 # If GPIO 26 is pulled HIGH, then stop and disable the RaspAP access point
 if [[ $(raspi-gpio get $RASPAP_TRIGGER_OFF_PIN | cut -d " " -f 3) == "level=1" ]]; then
-    # only execute if is running
+    # only execute if is enabled
     if [[ $(systemctl is-enabled --quiet hostapd.service) ]]; then
         swap /etc/raspap/backups/dhcpcd.conf /etc/dhcpcd.conf
         sudo systemctl restart dhcpcd.service
@@ -31,6 +31,7 @@ fi
 
 # If there are no WIFI credentials, or GPIO 20 is pulled HIGH, then enable and start the RaspAP access point
 if [[ (! -f $WPA_FILE) || $(raspi-gpio get $RASPAP_TRIGGER_ON_PIN | cut -d " " -f 3) == "level=1" ]]; then
+    # only execute if not enabled
     if [[ ! $(systemctl is-enabled --quiet hostapd.service) ]]; then
         swap /etc/raspap/backups/dhcpcd.conf /etc/dhcpcd.conf
         sudo systemctl restart dhcpcd.service
