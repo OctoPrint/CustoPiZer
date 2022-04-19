@@ -35,6 +35,4 @@ if [ "$LEADER" == "1" ]; then
 
     # swap back old dhcpcd file
     swap /etc/raspap/backups/dhcpcd.conf /etc/dhcpcd.conf
-
-
 fi

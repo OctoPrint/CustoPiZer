@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS dosing_events (
 
 
 
-CREATE TABLE IF NOT EXISTS led_events (
+CREATE TABLE IF NOT EXISTS led_change_events (
     timestamp              TEXT  NOT NULL,
     experiment             TEXT  NOT NULL,
     channel                TEXT  NOT NULL,
@@ -197,3 +197,11 @@ CREATE TABLE IF NOT EXISTS pioreactor_unit_labels (
     UNIQUE(pioreactor_unit, experiment)
 );
 
+CREATE TABLE IF NOT EXISTS automation_events (
+    pioreactor_unit          TEXT NOT NULL,
+    experiment               TEXT NOT NULL,
+    event_name               TEXT NOT NULL,
+    message                  TEXT,
+    data                     TEXT,
+    timestamp                TEXT
+)
