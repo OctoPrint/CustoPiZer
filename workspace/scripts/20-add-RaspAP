@@ -7,6 +7,14 @@ export LC_ALL=C
 source /common.sh
 install_cleanup_trap
 
+
+function swap()
+{
+    local TMPFILE=tmp.$$
+    mv "$1" $TMPFILE && mv "$2" "$1" && mv $TMPFILE "$2"
+}
+
+
 if [ "$LEADER" == "1" ]; then
 
     # curl -sL https://install.raspap.com ``> raspap.sh
@@ -22,5 +30,9 @@ if [ "$LEADER" == "1" ]; then
     # turn off by default. It's turned on by conditionally_start_raspap.sh, which is called by a service on boot.
     sudo systemctl disable raspapd.service
     sudo systemctl disable hostapd.service
+
+    # swap back old dhcpcd file
+    swap /etc/raspap/backups/dhcpcd.conf /etc/dhcpcd.conf
+
 
 fi

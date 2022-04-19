@@ -9,20 +9,20 @@ install_cleanup_trap
 
 # systemd: add long running pioreactor jobs
 
-SYSTEM_DIR=/lib/systemd/system/
+SYSTEMD_DIR=/lib/systemd/system/
 
-sudo cp /files/system/systemd/pioreactor_startup_run_always@.service $SYSTEM_DIR
+sudo cp /files/system/systemd/pioreactor_startup_run_always@.service $SYSTEMD_DIR
 sudo systemctl enable pioreactor_startup_run_always@monitor.service
 
 # systemd: remove wifi powersave - helps with mdns discovery
-sudo cp /files/system/systemd/wifi_powersave.service $SYSTEM_DIR
+sudo cp /files/system/systemd/wifi_powersave.service $SYSTEMD_DIR
 sudo systemctl enable wifi_powersave.service
 
 if [ "$LEADER" == "1" ]; then
-    sudo cp /files/system/systemd/ngrok.service $SYSTEM_DIR
+    sudo cp /files/system/systemd/ngrok.service $SYSTEMD_DIR
 
     # systemd: web UI
-    sudo cp /files/system/systemd/start_pioreactorui.service $SYSTEM_DIR
+    sudo cp /files/system/systemd/start_pioreactorui.service $SYSTEMD_DIR
     sudo systemctl enable start_pioreactorui.service
 
     # systemd: add long running pioreactor jobs
@@ -30,7 +30,7 @@ if [ "$LEADER" == "1" ]; then
     sudo systemctl enable pioreactor_startup_run_always@mqtt_to_db_streaming.service
 
     # systemd: alias hostname to pioreactor.local
-    sudo cp /files/system/systemd/avahi-alias.service $SYSTEM_DIR
+    sudo cp /files/system/systemd/avahi-alias.service $SYSTEMD_DIR
     sudo systemctl enable avahi-alias.service
 
     # add avahi services
@@ -38,8 +38,8 @@ if [ "$LEADER" == "1" ]; then
     sudo cp /files/system/avahi/pioreactorui.service /etc/avahi/services/
 
     # install raspap service check
-    sudo cp /files/system/systemd/conditionally_start_raspap.service $SYSTEM_DIR
-    sudo systemctl enable conditionally_start_raspap.service
+    sudo cp /files/system/systemd/start_raspap.service $SYSTEMD_DIR
+    sudo systemctl enable start_raspap.service
     cp /files/bash/conditionally_start_raspap.sh /boot/conditionally_start_raspap.sh
 fi
 

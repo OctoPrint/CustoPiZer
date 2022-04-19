@@ -1,7 +1,7 @@
 [Unit]
 Description=Publish an alias for %H.local via mdns
 Wants=network-online.target
-After=network-online.target
+After=network-online.target start_raspap.service
 
 [Service]
 Type=simple
