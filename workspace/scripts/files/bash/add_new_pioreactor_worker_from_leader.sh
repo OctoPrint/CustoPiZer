@@ -38,7 +38,7 @@ touch /home/$USERNAME/.pioreactor/config_$HOSTNAME.ini
 echo -e "# Any settings here are specific to $HOSTNAME, and override the settings in shared config.ini" >> /home/$USERNAME/.pioreactor/config_$HOSTNAME.ini
 crudini --set /home/$USERNAME/.pioreactor/config.ini network.inventory $HOSTNAME 1
 
-# add to known hosts
+# add worker to known hosts on leader
 ssh-keyscan $HOSTNAME >> /home/$USERNAME/.ssh/known_hosts
 
 # sync-configs

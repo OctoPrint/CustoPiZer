@@ -1,0 +1,38 @@
+set -x
+set -e
+
+export LC_ALL=C
+
+
+source /common.sh
+install_cleanup_trap
+
+
+function swap()
+{
+    local TMPFILE=tmp.$$
+    mv "$1" $TMPFILE && mv "$2" "$1" && mv $TMPFILE "$2"
+}
+
+INSTALLER=https://raw.githubusercontent.com/Pioreactor/raspap-webgui/master/installers/raspbian.sh
+
+
+if [ "$LEADER" == "1" ]; then
+
+    # we modified the installer slightly to work with qemu. It's possible we
+    curl -sL $INSTALLER | bash -s -- --yes --openvpn 0 --adblock 0
+
+    # change port of webserver to not conflict with pioreactor.local
+    sed -i "s/server.port                 = 80/server.port                 = 8080/" /etc/lighttpd/lighttpd.conf
+
+    # change ssid and password
+    sed -i "s/ssid=raspi-webgui/ssid=pioreactor/" /etc/hostapd/hostapd.conf
+    sed -i "s/wpa_passphrase=ChangeMe/wpa_passphrase=raspberry/" /etc/hostapd/hostapd.conf
+
+    # turn off by default. It's turned on by conditionally_start_raspap.sh, which is called by a service on boot.
+    sudo systemctl disable raspapd.service
+    sudo systemctl disable hostapd.service
+
+    # swap back old dhcpcd file
+    swap /etc/raspap/backups/dhcpcd.conf /etc/dhcpcd.conf
+fi
