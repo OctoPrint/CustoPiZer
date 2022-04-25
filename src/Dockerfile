@@ -4,7 +4,7 @@ FROM debian:${VERSION}
 
 
 ENV VERSION="bullseye"
-ENV PACKAGES="binfmt-support build-essential lsof sudo fdisk"
+ENV PACKAGES="binfmt-support build-essential lsof sudo util-linux fdisk"
 ENV BPO="qemu qemu-user-static"
 
 RUN set -ex \
