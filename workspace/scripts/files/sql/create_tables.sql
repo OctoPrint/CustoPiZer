@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS od_readings_raw (
     od_reading_v           REAL     NOT NULL,
     experiment             TEXT     NOT NULL,
     angle                  INTEGER  NOT NULL,
-    channel                INTEGER  NOT NULL
+    channel                TEXT CHECK( channel IN ('1', '2')) TEXT NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS od_readings_raw_ix
@@ -47,11 +47,11 @@ CREATE TABLE IF NOT EXISTS dosing_events (
 
 
 CREATE TABLE IF NOT EXISTS led_change_events (
-    timestamp              TEXT  NOT NULL,
-    experiment             TEXT  NOT NULL,
-    channel                TEXT  NOT NULL,
-    intensity              REAL  NOT NULL,
-    pioreactor_unit        TEXT  NOT NULL,
+    timestamp              TEXT                                       NOT NULL,
+    experiment             TEXT                                       NOT NULL,
+    channel                TEXT CHECK( channel IN ('A','B','C', 'D')) NOT NULL,
+    intensity              REAL                                       NOT NULL,
+    pioreactor_unit        TEXT                                       NOT NULL,
     source_of_event        TEXT
 );
 
@@ -177,7 +177,7 @@ CREATE TABLE IF NOT EXISTS od_blanks (
     timestamp                TEXT NOT NULL,
     pioreactor_unit          TEXT NOT NULL,
     experiment               TEXT NOT NULL,
-    channel                  TEXT NOT NULL,
+    channel                  TEXT CHECK( channel IN ('1', '2')) TEXT NOT NULL,
     od_reading_v             REAL NOT NULL
 );
 
@@ -197,7 +197,25 @@ CREATE TABLE IF NOT EXISTS pioreactor_unit_labels (
     UNIQUE(pioreactor_unit, experiment)
 );
 
-CREATE TABLE IF NOT EXISTS automation_events (
+CREATE TABLE IF NOT EXISTS temperature_automation_events (
+    pioreactor_unit          TEXT NOT NULL,
+    experiment               TEXT NOT NULL,
+    event_name               TEXT NOT NULL,
+    message                  TEXT,
+    data                     TEXT,
+    timestamp                TEXT
+)
+
+CREATE TABLE IF NOT EXISTS dosing_automation_events (
+    pioreactor_unit          TEXT NOT NULL,
+    experiment               TEXT NOT NULL,
+    event_name               TEXT NOT NULL,
+    message                  TEXT,
+    data                     TEXT,
+    timestamp                TEXT
+)
+
+CREATE TABLE IF NOT EXISTS led_automation_events (
     pioreactor_unit          TEXT NOT NULL,
     experiment               TEXT NOT NULL,
     event_name               TEXT NOT NULL,
