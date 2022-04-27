@@ -4,6 +4,7 @@ After=network.target
 
 [Service]
 ExecStart=/opt/ngrok/ngrok start ui ws --config /home/pioreactor/.ngrok2/ngrok.yml
+ExecStartPost=pio append_to_log -m "%n successful"
 Type=simple
 
 [Install]

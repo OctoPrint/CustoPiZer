@@ -6,6 +6,7 @@ Wants=network-pre.target
 [Service]
 Type=simple
 ExecStart=/boot/conditionally_start_raspap.sh
+ExecStartPost=pio append_to_log -m "%n successful"
 
 [Install]
 WantedBy=multi-user.target

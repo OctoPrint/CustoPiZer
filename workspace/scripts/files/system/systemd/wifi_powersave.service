@@ -6,6 +6,7 @@ After=sys-subsystem-net-devices-wlan0.device
 Type=oneshot
 RemainAfterExit=yes
 ExecStart=/sbin/iw dev wlan0 set power_save off
+ExecStartPost=pio append_to_log -m "%n successful"
 
 [Install]
 WantedBy=sys-subsystem-net-devices-wlan0.device
