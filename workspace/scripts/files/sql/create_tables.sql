@@ -204,7 +204,7 @@ CREATE TABLE IF NOT EXISTS temperature_automation_events (
     message                  TEXT,
     data                     TEXT,
     timestamp                TEXT
-)
+);
 
 CREATE TABLE IF NOT EXISTS dosing_automation_events (
     pioreactor_unit          TEXT NOT NULL,
@@ -213,7 +213,7 @@ CREATE TABLE IF NOT EXISTS dosing_automation_events (
     message                  TEXT,
     data                     TEXT,
     timestamp                TEXT
-)
+);
 
 CREATE TABLE IF NOT EXISTS led_automation_events (
     pioreactor_unit          TEXT NOT NULL,
@@ -222,4 +222,4 @@ CREATE TABLE IF NOT EXISTS led_automation_events (
     message                  TEXT,
     data                     TEXT,
     timestamp                TEXT
-)
+);
