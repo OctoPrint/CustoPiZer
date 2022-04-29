@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS od_readings_raw (
     od_reading_v           REAL     NOT NULL,
     experiment             TEXT     NOT NULL,
     angle                  INTEGER  NOT NULL,
-    channel                TEXT CHECK( channel IN ('1', '2')) TEXT NOT NULL
+    channel                TEXT CHECK( channel IN ('1', '2')) NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS od_readings_raw_ix
@@ -177,7 +177,7 @@ CREATE TABLE IF NOT EXISTS od_blanks (
     timestamp                TEXT NOT NULL,
     pioreactor_unit          TEXT NOT NULL,
     experiment               TEXT NOT NULL,
-    channel                  TEXT CHECK( channel IN ('1', '2')) TEXT NOT NULL,
+    channel                  TEXT CHECK( channel IN ('1', '2')) NOT NULL,
     od_reading_v             REAL NOT NULL
 );
 
