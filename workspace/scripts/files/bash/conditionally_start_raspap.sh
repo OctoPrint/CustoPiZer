@@ -23,7 +23,7 @@ if [[ (-f $WPA_FILE) && $(raspi-gpio get $RASPAP_TRIGGER_OFF_PIN | cut -d " " -f
         systemctl daemon-reload
         systemctl restart wpa_supplicant.service
         systemctl restart dhcpcd.service
-        pio append_to_log -m "Turning off hotspot"
+        pio log -m "Turning off hotspot" -n raspap
     fi
 fi
 
@@ -36,6 +36,6 @@ if [[ (! -f $WPA_FILE) || $(raspi-gpio get $RASPAP_TRIGGER_ON_PIN | cut -d " " -
         systemctl restart dhcpcd.service
         systemctl enable raspapd.service --now
         systemctl enable hostapd.service --now
-        pio append_to_log -m "Turning on hotspot"
+        pio log -m "Turning on hotspot" -n raspap
     fi
 fi
