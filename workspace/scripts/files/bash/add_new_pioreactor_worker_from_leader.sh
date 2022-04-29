@@ -24,7 +24,7 @@ ssh-keygen -R $(host $HOSTNAME | awk '/has address/ { print $4 ; exit }')       
 # allow us to SSH in, but make sure we can first before continuing.
 # check we have .pioreactor folder to confirm the device has the pioreactor image
 while ! sshpass -e ssh $HOSTNAME "test -d /home/$USERNAME/.pioreactor && echo 'exists'"
-    do echo "Connection to $HOSTNAME missed - `date`"
+     do echo "Connection to $HOSTNAME missed - `date`"
     sleep 2
 done
 
