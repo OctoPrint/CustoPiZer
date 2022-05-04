@@ -8,12 +8,6 @@ source /common.sh
 install_cleanup_trap
 
 
-function swap()
-{
-    local TMPFILE=tmp.$$
-    mv "$1" $TMPFILE && mv "$2" "$1" && mv $TMPFILE "$2"
-}
-
 INSTALLER=https://raw.githubusercontent.com/Pioreactor/raspap-webgui/master/installers/raspbian.sh
 
 
@@ -31,7 +25,6 @@ if [ "$LEADER" == "1" ]; then
 
     # change the dns server to AP machine. This IP is coded by RaspAP.
     sed -i "s/dhcp-option=6.*$/dhcp-option=6,10.3.141.1/" /etc/dnsmasq.d/090_wlan0.conf
-
 
 
     # turn off by default. It's turned on by conditionally_start_raspap.sh, which is called by a service on boot.
