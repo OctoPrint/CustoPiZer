@@ -19,10 +19,6 @@ if [ "$LEADER" == "1" ]; then
     # change port of webserver to not conflict with pioreactor.local
     sed -i "s/server.port                 = 80/server.port                 = 8080/" /etc/lighttpd/lighttpd.conf
 
-    # change ssid and password
-    sed -i "s/ssid=raspi-webgui/ssid=pioreactor/" /etc/hostapd/hostapd.conf
-    sed -i "s/wpa_passphrase=ChangeMe/wpa_passphrase=raspberry/" /etc/hostapd/hostapd.conf
-
     # change the dns server to AP machine. This IP is coded by RaspAP.
     sed -i "s/dhcp-option=6.*$/dhcp-option=6,10.3.141.1/" /etc/dnsmasq.d/090_wlan0.conf
 

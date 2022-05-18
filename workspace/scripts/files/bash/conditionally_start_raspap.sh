@@ -11,6 +11,10 @@ RASPAP_TRIGGER_ON_PIN=20
 RASPAP_TRIGGER_OFF_PIN=26
 
 
+# first, always update the SSID and passphrase to what's in the config.ini
+sed -i "s/ssid=.*/ssid=$(crudini --get /home/pioreactor/.pioreactor/config.ini local_access_point ssid)/" /etc/hostapd/hostapd.conf
+sed -i "s/wpa_passphrase=.*/wpa_passphrase=$(crudini --get /home/pioreactor/.pioreactor/config.ini local_access_point passphrase)/" /etc/hostapd/hostapd.conf
+
 
 # If GPIO 26 is pulled HIGH, then stop and disable the RaspAP access point, but only if there are WIFI credentials to use
 if [[ (-f $WPA_FILE) && $(raspi-gpio get $RASPAP_TRIGGER_OFF_PIN | cut -d " " -f 3) == "level=1" ]]; then
