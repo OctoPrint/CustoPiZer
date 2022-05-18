@@ -45,4 +45,8 @@ if [ "$LEADER" == "1" ]; then
 fi
 
 
+if [ "$WORKER" == "1" ]; then
+    # add avahi services
+    sudo cp /files/system/avahi/pioreactor_worker.service /etc/avahi/services/
+fi
 

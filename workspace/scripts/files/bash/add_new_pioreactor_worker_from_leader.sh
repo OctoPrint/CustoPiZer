@@ -3,7 +3,9 @@
 # for more than one leader to "connect" to the
 # same worker, so the worker can be used in multiple clusters.
 # first argument is the hostname of the new pioreactor worker
-# TODO: make the second argument the required password
+
+# TODO: we should check that the other Pioreactor is a worker. One way is to see if
+# there is a avahi service discovered (as worker publish pioreactor-worker mdns service)
 
 set -x
 set -e
