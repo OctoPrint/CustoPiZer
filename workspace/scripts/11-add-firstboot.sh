@@ -10,7 +10,7 @@ install_cleanup_trap
 
 
 cp /files/system/systemd/firstboot.service /lib/systemd/system/
-cd /etc/systemd/system/multi-user.target.wants && ln -s /lib/systemd/system/firstboot.service .
+cd /etc/systemd/system/multi-user.target.wants && ln -s /lib/systemd/system/firstboot.service .  # why do I do this??
 
 
 if [ "$LEADER" == "1" ] && [ "$WORKER" == "1" ]; then

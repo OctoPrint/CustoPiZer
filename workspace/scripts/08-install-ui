@@ -26,7 +26,7 @@ if [ "$LEADER" == "1" ]; then
     sudo npm install pm2@5.1.0 -g
 
     # we add another entry to mDNS: pioreactor.local (can be modified in config.ini), and we need the following:
-    # see avahi-alias.service for how this works
+    # see avahi_alias.service for how this works
     sudo apt-get install avahi-utils -y
 
     # iptables USE to ship with RPi OS, not any more?

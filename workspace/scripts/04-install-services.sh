@@ -18,6 +18,7 @@ sudo systemctl enable pioreactor_startup_run_always@monitor.service
 sudo cp /files/system/systemd/wifi_powersave.service $SYSTEMD_DIR
 sudo systemctl enable wifi_powersave.service
 
+
 if [ "$LEADER" == "1" ]; then
     sudo cp /files/system/systemd/ngrok.service $SYSTEMD_DIR
 
@@ -30,8 +31,8 @@ if [ "$LEADER" == "1" ]; then
     sudo systemctl enable pioreactor_startup_run_always@mqtt_to_db_streaming.service
 
     # systemd: alias hostname to pioreactor.local
-    sudo cp /files/system/systemd/avahi-alias.service $SYSTEMD_DIR
-    sudo systemctl enable avahi-alias.service
+    sudo cp /files/system/systemd/avahi_alias.service $SYSTEMD_DIR
+    sudo systemctl enable avahi_alias.service
 
     # add avahi services
     sudo cp /files/system/avahi/mqtt.service /etc/avahi/services/
