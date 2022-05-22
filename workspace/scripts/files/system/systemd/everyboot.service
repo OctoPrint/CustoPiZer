@@ -6,7 +6,6 @@ ConditionFileNotEmpty=/boot/everyboot.sh
 
 [Service]
 ExecStart=/boot/everyboot.sh
-ExecStopPost=pio log -m "%n failed" -n systemd
 Type=oneshot
 RemainAfterExit=no
 

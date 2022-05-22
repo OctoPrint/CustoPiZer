@@ -28,7 +28,7 @@ crudini --set $PIO_DIR/config.ini network.topology leader_address $(hostname).lo
 # techdebt: seed_initial_experiment.sql adds an experiment to the db, so we need to match it in mqtt too
 # this happens in firstboot and not in the image because mqtt will only save to disk every 5m, so it's
 # never stored on the image.
-mosquitto_pub -t "pioreactor/latest_experiment" -m "Demo experiment" -r
+mosquitto_pub -t "pioreactor/latest_experiment" -m "Demo experiment" -r -q 1
 
 
 # attempt backup database every N days

@@ -8,7 +8,6 @@ ConditionFileNotEmpty=/boot/firstboot.sh
 ExecStart=/boot/firstboot.sh
 ExecStartPost=/bin/mv /boot/firstboot.sh /boot/firstboot.sh.done
 ExecStartPost=pio log -m "%n successful" -n systemd
-ExecStopPost=pio log -m "%n failed" -n systemd
 Type=oneshot
 RemainAfterExit=no
 

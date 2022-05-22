@@ -28,7 +28,7 @@ if [ "$LEADER" == "1" ]; then
     sudo systemctl disable hostapd.service
 
     # swap back old dhcpcd file
-    mv /etc/dhcpcd.conf /etc/raspap/backups/dhcpcd.conf.raspap
-    cp /etc/raspap/backups/dhcpcd.conf.raspap /etc/raspap/backups/dhcpcd.conf.original
-    mv /etc/raspap/backups/dhcpcd.conf.original /etc/dhcpcd.conf
+    sudo mv /etc/dhcpcd.conf /etc/raspap/backups/dhcpcd.conf.raspap
+    sudo cp /etc/raspap/backups/dhcpcd.conf /etc/raspap/backups/dhcpcd.conf.original
+    sudo mv /etc/raspap/backups/dhcpcd.conf.original /etc/dhcpcd.conf
 fi

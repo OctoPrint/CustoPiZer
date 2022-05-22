@@ -3,6 +3,6 @@
 <service-group>
   <name replace-wildcards="yes">pioreactor_worker_on_%h</name>
   <service>
-    <type>pioreactor-worker</type>
+    <type>_pioreactor_worker._tcp</type>
   </service>
 </service-group>
