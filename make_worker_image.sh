@@ -17,5 +17,5 @@ docker run --rm --privileged \
     -v /Users/camerondavidson-pilon/code/CustoPiZer/workspace:/CustoPiZer/workspace/  -v /Users/camerondavidson-pilon/code/CustoPiZer/config.local:/CustoPiZer/config.local ghcr.io/octoprint/custopizer:latest \
     && (cd workspace/; zip $OUTPUT output.img) \
     && echo $OUTPUT \
-    && md5 -q $OUTPUT \
+    && md5 -q workspace/$OUTPUT \
     && rm workspace/output.img

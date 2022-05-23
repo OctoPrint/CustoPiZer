@@ -14,7 +14,7 @@ INSTALLER=https://raw.githubusercontent.com/Pioreactor/raspap-webgui/master/inst
 if [ "$LEADER" == "1" ]; then
 
     # we modified the installer slightly to work with qemu. It's possible we
-    curl -sL $INSTALLER | bash -s -- --yes --openvpn 0 --adblock 0
+    curl -sL $INSTALLER | bash -s -- --yes --openvpn 0 --adblock 0 --repo Pioreactor/raspap-webgui --branch master
 
     # change port of webserver to not conflict with pioreactor.local
     sed -i "s/server.port                 = 80/server.port                 = 8080/" /etc/lighttpd/lighttpd.conf
