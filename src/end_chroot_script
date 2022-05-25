@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # EditBase script
 # Basic and mandatory settings for the base of an OctoPi customization run
-# Written by Gina Haeussge <gina at octoprint dot org>, 
+# Written by Gina Haeussge <gina at octoprint dot org>,
 # based on work by Guy Sheffer <guysoft at gmail dot com>
 # GPL V3
 ########
@@ -20,6 +20,11 @@ then
   rm -r /root/.pydistutils.cfg
   rm -r /home/"${BASE_USER}"/.pip/pip.conf
   rm -r /home/"${BASE_USER}"/.pydistutils.cfg
+fi
+
+# Remove common.sh after build (https://github.com/OctoPrint/CustoPiZer/issues/13)
+if [ -f "/common.sh" ]; then
+    rm -f /common.sh
 fi
 
 #cleanup
