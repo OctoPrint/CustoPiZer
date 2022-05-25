@@ -25,8 +25,7 @@ docker run --rm --privileged -v /path/to/workspace:/CustoPiZer/workspace ghcr.io
 
 Your customized image will be located in the `workspace` directory and named `output.img`.
 
-If you are having problems getting the container to connect to the internet for updates etc. then run with `--dns 8.8.8.8` or another DNS 
-server of your choosing.
+If you are having problems getting the container to connect to the internet for updates etc. then run with `--dns 8.8.8.8`.
 
 ### Why the `--privileged` flag?
 
