@@ -14,9 +14,9 @@ cd /etc/systemd/system/multi-user.target.wants && ln -s /lib/systemd/system/firs
 
 
 if [ "$LEADER" == "1" ] && [ "$WORKER" == "1" ]; then
-    cp /files/bash/firstboot_leader_and_worker.sh /boot/firstboot.sh
+    cp /files/bash/firstboot_leader_and_worker.sh /usr/local/bin/firstboot.sh
 elif [ "$LEADER" == "1" ]; then
-    cp /files/bash/firstboot_leader.sh /boot/firstboot.sh
+    cp /files/bash/firstboot_leader.sh /usr/local/bin/firstboot.sh
 elif [ "$WORKER" == "1" ]; then
-    cp /files/bash/firstboot_worker.sh /boot/firstboot.sh
+    cp /files/bash/firstboot_worker.sh /usr/local/bin/firstboot.sh
 fi

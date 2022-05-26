@@ -11,4 +11,4 @@ install_cleanup_trap
 # add everyboot
 sudo cp /files/system/systemd/everyboot.service /lib/systemd/system/
 sudo systemctl enable everyboot.service
-cp /files/bash/everyboot.sh /boot/everyboot.sh
+cp /files/bash/everyboot.sh /usr/local/bin/everyboot.sh

@@ -2,10 +2,10 @@
 Description=Runs everyboot.sh on the first boot of the Raspberry Pi. If successful, it will modify itself to not run again.
 Before=rc-local.service
 After=network.target
-ConditionFileNotEmpty=/boot/everyboot.sh
+ConditionFileNotEmpty=/usr/local/bin/everyboot.sh
 
 [Service]
-ExecStart=/boot/everyboot.sh
+ExecStart=/usr/local/bin/everyboot.sh
 Type=oneshot
 RemainAfterExit=no
 

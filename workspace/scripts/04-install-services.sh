@@ -41,7 +41,7 @@ if [ "$LEADER" == "1" ]; then
     # install raspap service check
     sudo cp /files/system/systemd/start_raspap.service $SYSTEMD_DIR
     sudo systemctl enable start_raspap.service
-    cp /files/bash/conditionally_start_raspap.sh /boot/conditionally_start_raspap.sh
+    cp /files/bash/conditionally_start_raspap.sh /usr/local/bin/conditionally_start_raspap.sh
 fi
 
 

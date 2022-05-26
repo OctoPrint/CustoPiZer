@@ -2,11 +2,11 @@
 Description=Runs firstboot.sh on the first boot of the Raspberry Pi. If successful, it will modify itself to not run again.
 Before=rc-local.service
 After=network.target
-ConditionFileNotEmpty=/boot/firstboot.sh
+ConditionFileNotEmpty=/usr/local/bin/firstboot.sh
 
 [Service]
-ExecStart=/boot/firstboot.sh
-ExecStartPost=/bin/mv /boot/firstboot.sh /boot/firstboot.sh.done
+ExecStart=/usr/local/bin/firstboot.sh
+ExecStartPost=/bin/mv /usr/local/bin/firstboot.sh /usr/local/bin/firstboot.sh.done
 ExecStartPost=pio log -m "%n successful" -n systemd
 Type=oneshot
 RemainAfterExit=no
