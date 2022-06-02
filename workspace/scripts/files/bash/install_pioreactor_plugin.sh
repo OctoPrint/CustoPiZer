@@ -13,9 +13,9 @@ url=$2
 
 if [ ! -z $url ]
 then
-    sudo pip3 install -I  $url
+    sudo pip3 install --disable-pip-version-check -I  $url
 else
-    sudo pip3 install -I $plugin_name
+    sudo pip3 install --disable-pip-version-check -I $plugin_name
 fi
 
 

@@ -5,7 +5,7 @@
 GIT_COMMIT="$(git show --format="%h" --no-patch)"
 DATE=$(date '+%Y-%m-%d')
 
-OUTPUT=pioreactor_leader_$DATE.img.zip
+OUTPUT=pioreactor_leader_$DATE.img.xz
 
 rm -f workspace/$OUTPUT
 
@@ -15,7 +15,7 @@ docker run --rm --privileged \
     -e WORKER=0 \
     -e LEADER=1 \
     -v /Users/camerondavidson-pilon/code/CustoPiZer/workspace:/CustoPiZer/workspace/  -v /Users/camerondavidson-pilon/code/CustoPiZer/config.local:/CustoPiZer/config.local ghcr.io/octoprint/custopizer:latest \
-    && (cd workspace/; zip $OUTPUT output.img) \
+    && (cd workspace/; tar caf $OUTPUT output.img) \
     && echo $OUTPUT \
     && md5 -q workspace/$OUTPUT \
     && rm workspace/output.img

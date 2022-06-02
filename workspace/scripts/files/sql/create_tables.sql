@@ -139,8 +139,15 @@ CREATE TABLE IF NOT EXISTS kalman_filter_outputs (
     timestamp                TEXT NOT NULL,
     pioreactor_unit          TEXT NOT NULL,
     experiment               TEXT NOT NULL,
-    state                    TEXT NOT NULL,
-    covariance_matrix        TEXT NOT NULL
+    state_0                  REAL NOT NULL,
+    state_1                  REAL NOT NULL,
+    state_2                  REAL NOT NULL,
+    cov_00                   REAL NOT NULL,
+    cov_01                   REAL NOT NULL,
+    cov_02                   REAL NOT NULL,
+    cov_11                   REAL NOT NULL,
+    cov_12                   REAL NOT NULL,
+    cov_22                   REAL NOT NULL
 );
 
 
@@ -178,6 +185,7 @@ CREATE TABLE IF NOT EXISTS od_blanks (
     pioreactor_unit          TEXT NOT NULL,
     experiment               TEXT NOT NULL,
     channel                  TEXT CHECK( channel IN ('1', '2')) NOT NULL,
+    angle                    INTEGER NOT NULL,
     od_reading_v             REAL NOT NULL
 );
 

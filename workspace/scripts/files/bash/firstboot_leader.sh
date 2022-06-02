@@ -9,6 +9,7 @@ export LC_ALL=C
 USERNAME=pioreactor
 PIO_DIR=/home/$USERNAME/.pioreactor
 SSH_DIR=/home/$USERNAME/.ssh
+DB_LOC=/home/$USERNAME/.pioreactor/storage/pioreactor.sqlite
 
 sudo -u $USERNAME rm -rf $SSH_DIR # remove if already exists.
 
@@ -25,9 +26,7 @@ sudo -u $USERNAME echo "StrictHostKeyChecking accept-new" >> $SSH_DIR/config
 crudini --set $PIO_DIR/config.ini network.topology leader_hostname $(hostname)
 crudini --set $PIO_DIR/config.ini network.topology leader_address $(hostname).local
 
-# techdebt: seed_initial_experiment.sql adds an experiment to the db, so we need to match it in mqtt too
-# this happens in firstboot and not in the image because mqtt will only save to disk every 5m, so it's
-# never stored on the image.
+sqlite3 $DB_LOC "INSERT OR IGNORE INTO experiments (timestamp, experiment, description) VALUES (STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW'), 'Demo experiment', 'This is a demo experiment. Feel free to click around. When you are ready, click the [New experiment] above.');"
 mosquitto_pub -t "pioreactor/latest_experiment" -m "Demo experiment" -r -q 1
 
 
