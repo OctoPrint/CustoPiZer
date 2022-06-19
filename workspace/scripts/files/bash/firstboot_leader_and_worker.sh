@@ -23,8 +23,8 @@ sudo -u $USERNAME ssh-keyscan $(hostname) >> $SSH_DIR/known_hosts
 sudo -u $USERNAME echo "StrictHostKeyChecking accept-new" >> $SSH_DIR/config
 
 
-crudini --set $PIO_DIR/config.ini network.topology leader_hostname $(hostname)
-crudini --set $PIO_DIR/config.ini network.topology leader_address $(hostname).local
+crudini --set $PIO_DIR/config.ini cluster.topology leader_hostname $(hostname)
+crudini --set $PIO_DIR/config.ini cluster.topology leader_address $(hostname).local
 
 sqlite3 $DB_LOC "INSERT OR IGNORE INTO experiments (timestamp, experiment, description) VALUES (STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW'), 'Demo experiment', 'This is a demo experiment. Feel free to click around. When you are ready, click the [New experiment] above.');"
 mosquitto_pub -t "pioreactor/latest_experiment" -m "Demo experiment" -r -q 1
@@ -39,4 +39,4 @@ echo "0 0 */5 * * /usr/local/bin/pio run backup_database" | crontab -
 sudo -u $USERNAME touch $PIO_DIR/config_$(hostname).ini # set with the correct read/write permissions
 printf "# Any settings here are specific to $(hostname), and override the settings in config.ini\n\n" >> $PIO_DIR/config_$(hostname).ini
 cp $PIO_DIR/config_$(hostname).ini $PIO_DIR/unit_config.ini
-crudini --set $PIO_DIR/config.ini network.inventory $(hostname) 1
+crudini --set $PIO_DIR/config.ini cluster.inventory $(hostname) 1
