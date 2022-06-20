@@ -75,6 +75,8 @@ function execute_chroot_script() {
   cp "$DIR/common.sh" common.sh
   chmod 755 common.sh
   
+  mount -t proc /proc proc/
+  
   if [ "$(arch)" != "armv7l" ] && [ "$(arch)" != "aarch64" ] && [ "$(arch)" != "arm64" ] ; then
     if [ "$EDITBASE_ARCH" == "armv7l" ]; then
       echo "Building on non-ARM device a armv7l system, using qemu-arm-static"
