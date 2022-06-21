@@ -7,7 +7,7 @@ After=network-online.target start_raspap.service
 ExecStart=/bin/bash -c "/usr/bin/avahi-publish -a -R $(crudini --get /home/pioreactor/.pioreactor/config.ini ui domain_alias) $(avahi-resolve -4 -n %H.local | cut -f 2)"
 ExecStartPost=pio log -m "%n successful" -n systemd
 RuntimeMaxSec=14400
-Type=oneshot
+Type=simple
 
 [Install]
 WantedBy=multi-user.target

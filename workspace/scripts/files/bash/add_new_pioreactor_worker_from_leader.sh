@@ -40,6 +40,7 @@ echo -e "# Any settings here are specific to $HOSTNAME, and override the setting
 crudini --set /home/$USERNAME/.pioreactor/config.ini cluster.inventory $HOSTNAME 1
 
 # add worker to known hosts on leader
+ssh-keyscan $HOSTNAME.local >> /home/$USERNAME/.ssh/known_hosts
 ssh-keyscan $HOSTNAME >> /home/$USERNAME/.ssh/known_hosts
 
 # sync-configs

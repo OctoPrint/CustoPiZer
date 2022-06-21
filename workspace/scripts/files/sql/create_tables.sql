@@ -86,7 +86,7 @@ ON logs (experiment, level, task);
 
 CREATE TABLE IF NOT EXISTS experiments (
     experiment             TEXT  NOT NULL UNIQUE,
-    timestamp              TEXT  NOT NULL,
+    created_at             TEXT  NOT NULL,
     description            TEXT,
     media_used             TEXT,
     organism_used          TEXT
@@ -96,10 +96,10 @@ CREATE TABLE IF NOT EXISTS experiments (
 -- a index on all columns is much faster, BigO(n). This table is critical for the entire webpage performance.
 -- not the order of the values in the index is important to get this performance.
 -- https://medium.com/@JasonWyatt/squeezing-performance-from-sqlite-indexes-indexes-c4e175f3c346
-CREATE INDEX IF NOT EXISTS experiments_ix ON experiments (timestamp, experiment, description);
+CREATE INDEX IF NOT EXISTS experiments_ix ON experiments (created_at, experiment, description);
 
 
-CREATE VIEW IF NOT EXISTS latest_experiment AS SELECT experiment, timestamp, description, media_used, organism_used, round( (strftime("%s","now") - strftime("%s", timestamp))/60/60, 0) as delta_hours FROM experiments ORDER BY timestamp DESC LIMIT 1;
+CREATE VIEW IF NOT EXISTS latest_experiment AS SELECT experiment, created_at, description, media_used, organism_used, round( (strftime("%s","now") - strftime("%s", created_at))/60/60, 0) as delta_hours FROM experiments ORDER BY created_at DESC LIMIT 1;
 
 
 CREATE TABLE IF NOT EXISTS dosing_automation_settings (
@@ -202,6 +202,7 @@ CREATE TABLE IF NOT EXISTS pioreactor_unit_labels (
     pioreactor_unit          TEXT NOT NULL,
     experiment               TEXT NOT NULL,
     label                    TEXT NOT NULL,
+    created_at               TEXT NOT NULL,
     UNIQUE(pioreactor_unit, experiment)
 );
 
