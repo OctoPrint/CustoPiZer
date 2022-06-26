@@ -4,9 +4,6 @@
 # same worker, so the worker can be used in multiple clusters.
 # first argument is the hostname of the new pioreactor worker
 
-# TODO: we should check that the other Pioreactor is a worker. One way is to see if
-# there is a avahi service discovered (as worker publish pioreactor-worker mdns service)
-
 set -x
 set -e
 export LC_ALL=C
@@ -17,6 +14,13 @@ HOSTNAME=$1
 
 USERNAME=pioreactor
 
+
+if ! avahi-browse _pioreactor_worker._tcp -t | grep -q $HOSTNAME; then
+  echo "Unable to confirm if $HOSTNAME is a Pioreactor worker. Not found in 'avahi-browse _pioreactor_worker._tcp -t'. Did you install the worker image?"
+  exit 1
+fi
+
+
 # remove from known_hosts if already present
 ssh-keygen -R $HOSTNAME.local          >/dev/null 2>&1
 ssh-keygen -R $HOSTNAME                >/dev/null 2>&1
@@ -25,7 +29,7 @@ ssh-keygen -R $HOSTNAME                >/dev/null 2>&1
 # allow us to SSH in, but make sure we can first before continuing.
 # check we have .pioreactor folder to confirm the device has the pioreactor image
 while ! sshpass -e ssh $HOSTNAME.local "test -d /home/$USERNAME/.pioreactor && echo 'exists'"
-     do echo "Connection to $HOSTNAME.local missed - `date`"
+    do echo "Connection to $HOSTNAME.local missed - `date`"
     sleep 2
 done
 
