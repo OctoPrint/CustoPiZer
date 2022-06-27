@@ -174,7 +174,7 @@ CREATE TABLE IF NOT EXISTS stirring_rates (
 
 
 
-CREATE TABLE IF NOT EXISTS config_files (
+CREATE TABLE IF NOT EXISTS config_files_histories (
     timestamp                TEXT NOT NULL,
     filename                 TEXT NOT NULL,
     data                     TEXT NOT NULL

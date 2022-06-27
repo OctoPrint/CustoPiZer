@@ -15,11 +15,6 @@ HOSTNAME=$1
 USERNAME=pioreactor
 
 
-if ! avahi-browse _pioreactor_worker._tcp -t | grep -q $HOSTNAME; then
-  echo "Unable to confirm if $HOSTNAME is a Pioreactor worker. Not found in 'avahi-browse _pioreactor_worker._tcp -t'. Did you install the worker image?"
-  exit 1
-fi
-
 
 # remove from known_hosts if already present
 ssh-keygen -R $HOSTNAME.local          >/dev/null 2>&1
@@ -32,6 +27,12 @@ while ! sshpass -e ssh $HOSTNAME.local "test -d /home/$USERNAME/.pioreactor && e
     do echo "Connection to $HOSTNAME.local missed - `date`"
     sleep 2
 done
+
+
+if ! avahi-browse _pioreactor_worker._tcp -t | grep -q $HOSTNAME; then
+  echo "Unable to confirm if $HOSTNAME is a Pioreactor worker. Not found in 'avahi-browse _pioreactor_worker._tcp -t'. Did you install the worker image?"
+  exit 1
+fi
 
 # copy public key over
 sshpass -e ssh-copy-id $HOSTNAME.local
