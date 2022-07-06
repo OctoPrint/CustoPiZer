@@ -48,3 +48,6 @@ sudo apt-get remove dphys-swapfile -y
 # put /tmp into memory, as we write to it a lot.
 echo "tmpfs /tmp tmpfs defaults,noatime 0 0" | sudo tee -a /etc/fstab
 
+# add environment variable for TMPDIR
+echo "TMPDIR=/tmp/" | sudo tee -a /etc/environment
+
