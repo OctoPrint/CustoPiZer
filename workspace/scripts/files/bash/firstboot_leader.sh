@@ -10,6 +10,7 @@ USERNAME=pioreactor
 PIO_DIR=/home/$USERNAME/.pioreactor
 SSH_DIR=/home/$USERNAME/.ssh
 DB_LOC=/home/$USERNAME/.pioreactor/storage/pioreactor.sqlite
+UI_DIR=/home/$USERNAME/pioreactorui
 
 sudo -u $USERNAME rm -rf $SSH_DIR # remove if already exists.
 
@@ -30,7 +31,10 @@ sqlite3 $DB_LOC "INSERT OR IGNORE INTO experiments (created_at, experiment, desc
 mosquitto_pub -t "pioreactor/latest_experiment" -m "Demo experiment" -r -q 1
 
 
+# crons don't persist if preinstalled on the image.
+
 # attempt backup database every N days
-# the below overwrites any existing crons
-# this doesn't persist if preinstalled on the image.
-echo "0 0 */5 * * /usr/local/bin/pio run backup_database" | crontab -
+(crontab -l ; echo "0 0 */5 * * /usr/local/bin/pio run backup_database") | crontab -
+
+# remove dataset exports in /home/pioreactor/pioreactorui/backend/build/static/exports
+(crontab -l ; echo "0 0 */29 * * rm $UI_DIR/backend/build/static/exports/*.zip $UI_DIR/backend/build/static/exports/*.csv") | crontab -

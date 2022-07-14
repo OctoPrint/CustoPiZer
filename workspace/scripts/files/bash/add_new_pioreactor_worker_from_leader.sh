@@ -19,6 +19,7 @@ USERNAME=pioreactor
 # remove from known_hosts if already present
 ssh-keygen -R $HOSTNAME.local          >/dev/null 2>&1
 ssh-keygen -R $HOSTNAME                >/dev/null 2>&1
+ssh-keygen -R $(getent hosts $HOSTNAME.local | cut -d' ' -f1)                 >/dev/null 2>&1
 
 
 # allow us to SSH in, but make sure we can first before continuing.
@@ -53,7 +54,7 @@ pios sync-configs --units $HOSTNAME
 sleep 2
 
 # check we have config.ini file to confirm the device has the necessary configuration
-while ! sshpass -e ssh $HOSTNAME "test -f /home/$USERNAME/.pioreactor/config.ini && echo 'exists'"
+while ! sshpass -e ssh $HOSTNAME.local "test -f /home/$USERNAME/.pioreactor/config.ini && echo 'exists'"
     do echo "Looking for config.ini - `date`"
     sleep 2
 done
@@ -61,6 +62,6 @@ done
 
 # reboot once more (previous reboot didn't have config.inis)
 # the || true is because the connection fails, which returns as -1.
-ssh $HOSTNAME 'sudo reboot;' || true
+ssh $HOSTNAME.local 'sudo reboot;' || true
 
 exit 0

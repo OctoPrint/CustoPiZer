@@ -14,6 +14,7 @@ sudo -u $USERNAME mkdir -p $PIO_DIR
 sudo -u $USERNAME mkdir -p $PIO_DIR/storage
 sudo -u $USERNAME mkdir -p $PIO_DIR/plugins
 
+sudo pip3 install --disable-pip-version-check wheel
 sudo pip3 install --disable-pip-version-check crudini
 
 if [ "$LEADER" == "1" ]; then
