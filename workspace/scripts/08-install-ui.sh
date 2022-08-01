@@ -23,7 +23,7 @@ if [ "$LEADER" == "1" ]; then
     # TODO: fix npm6, hitting this issue https://github.com/npm/cli/issues/3577
     npm install -g npm@6
     sudo npm --prefix $UI_FOLDER/backend install
-    sudo npm install pm2@5.1.0 -g
+    sudo npm install pm2@5.1.2 -g
 
     # we add another entry to mDNS: pioreactor.local (can be modified in config.ini), and we need the following:
     # see avahi_alias.service for how this works

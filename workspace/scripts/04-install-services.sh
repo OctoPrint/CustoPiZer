@@ -50,3 +50,12 @@ if [ "$WORKER" == "1" ]; then
     sudo cp /files/system/avahi/pioreactor_worker.service /etc/avahi/services/
 fi
 
+
+# disable things that slow down boot
+sudo systemctl disable raspi-config.service
+sudo systemctl disable triggerhappy.service
+sudo systemctl disable keyboard-setup.service
+sudo systemctl disable apt-daily-upgrade.service
+sudo systemctl disable alsa-restore.service
+
+

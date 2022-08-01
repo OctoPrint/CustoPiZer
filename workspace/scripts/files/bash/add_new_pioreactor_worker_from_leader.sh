@@ -47,7 +47,6 @@ crudini --set /home/$USERNAME/.pioreactor/config.ini cluster.inventory $HOSTNAME
 
 # add worker to known hosts on leader
 ssh-keyscan $HOSTNAME.local >> /home/$USERNAME/.ssh/known_hosts
-ssh-keyscan $HOSTNAME >> /home/$USERNAME/.ssh/known_hosts
 
 # sync-configs
 pios sync-configs --units $HOSTNAME
