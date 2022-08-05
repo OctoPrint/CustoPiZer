@@ -19,9 +19,9 @@ sudo -u $USERNAME touch $SSH_DIR/known_hosts
 
 sudo -u $USERNAME ssh-keygen -q -t rsa -N '' -f $SSH_DIR/id_rsa
 sudo -u $USERNAME cat $SSH_DIR/id_rsa.pub > $SSH_DIR/authorized_keys
-sudo -u $USERNAME ssh-keyscan $(hostname) >> $SSH_DIR/known_hosts # TODO: needed??
 sudo -u $USERNAME ssh-keyscan $(hostname).local >> $SSH_DIR/known_hosts
 sudo -u $USERNAME echo "StrictHostKeyChecking accept-new" >> $SSH_DIR/config
+sudo -u $USERNAME echo "CheckHostIP no" >> $SSH_DIR/config
 
 
 crudini --set $PIO_DIR/config.ini cluster.topology leader_hostname $(hostname)
