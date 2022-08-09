@@ -15,7 +15,6 @@ HOSTNAME=$1
 USERNAME=pioreactor
 
 
-
 # remove from known_hosts if already present
 ssh-keygen -R $HOSTNAME.local          >/dev/null 2>&1
 ssh-keygen -R $HOSTNAME                >/dev/null 2>&1
@@ -58,8 +57,11 @@ while ! sshpass -e ssh $HOSTNAME.local "test -f /home/$USERNAME/.pioreactor/conf
     sleep 2
 done
 
+# sync date & times, specifically for LAP see https://github.com/Pioreactor/pioreactor/issues/269
+ssh $HOSTNAME.local "sudo date --set \"$(date)\""
 
-# reboot once more (previous reboot didn't have config.inis)
+
+# reboot to set configuration
 # the || true is because the connection fails, which returns as -1.
 ssh $HOSTNAME.local 'sudo reboot;' || true
 
