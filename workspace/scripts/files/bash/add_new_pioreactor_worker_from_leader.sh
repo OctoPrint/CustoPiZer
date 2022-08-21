@@ -28,7 +28,7 @@ while ! sshpass -e ssh $HOSTNAME.local "test -d /home/$USERNAME/.pioreactor && e
     sleep 2
 done
 
-
+# check if it is a worker
 if ! avahi-browse _pioreactor_worker._tcp -t | grep -q $HOSTNAME; then
   echo "Unable to confirm if $HOSTNAME is a Pioreactor worker. Not found in 'avahi-browse _pioreactor_worker._tcp -t'. Did you install the worker image?"
   exit 1

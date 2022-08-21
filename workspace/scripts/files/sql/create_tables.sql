@@ -1,14 +1,14 @@
-CREATE TABLE IF NOT EXISTS od_readings_raw (
+CREATE TABLE IF NOT EXISTS od_readings (
     experiment               TEXT NOT NULL,
     pioreactor_unit          TEXT NOT NULL,
     timestamp                TEXT NOT NULL,
-    od_reading_v             REAL     NOT NULL,
+    od_reading               REAL     NOT NULL,
     angle                    INTEGER  NOT NULL,
     channel                  TEXT CHECK( channel IN ('1', '2')) NOT NULL
 );
 
-CREATE INDEX IF NOT EXISTS od_readings_raw_ix
-ON od_readings_raw (experiment);
+CREATE INDEX IF NOT EXISTS od_readings_ix
+ON od_readings (experiment);
 
 
 CREATE TABLE IF NOT EXISTS alt_media_fractions (
