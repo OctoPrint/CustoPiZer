@@ -257,3 +257,17 @@ CREATE TABLE IF NOT EXISTS pioreactor_unit_activity_data (
 CREATE UNIQUE INDEX IF NOT EXISTS pioreactor_unit_activity_data_ix
 ON pioreactor_unit_activity_data (experiment, pioreactor_unit, timestamp);
 
+
+CREATE TABLE IF NOT EXISTS calibrations (
+    pioreactor_unit          TEXT NOT NULL,
+    created_at               TEXT NOT NULL,
+    type                     TEXT NOT NULL,
+    data                     TEXT NOT NULL
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS calibrations_ix
+ON calibrations (pioreactor_unit, type, created_at);
+
+
+
+

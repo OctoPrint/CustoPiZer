@@ -8,4 +8,4 @@ export LC_ALL=C
 plugin_name=$1
 
 
-sudo pip3 uninstall -y $plugin_name
+sudo pip3 uninstall  --root-user-action=ignore  -y $plugin_name

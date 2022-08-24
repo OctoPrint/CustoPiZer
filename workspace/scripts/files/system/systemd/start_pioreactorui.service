@@ -1,7 +1,7 @@
 [Unit]
 Description=Start up PioreactorUI
 Wants=network-online.target
-After=network-online.target
+After=network.target network-online.target
 
 [Service]
 User=pioreactor
@@ -14,4 +14,4 @@ Environment="PATH=/home/pioreactor/.local/bin:/usr/local/sbin:/usr/local/bin:/us
 KillMode=none
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=multi-user.target network-online.target

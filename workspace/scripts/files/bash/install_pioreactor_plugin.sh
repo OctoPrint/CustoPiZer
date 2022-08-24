@@ -13,9 +13,9 @@ url=$2
 
 if [ ! -z $url ]
 then
-    sudo pip3 install --disable-pip-version-check -I  $url
+    sudo pip3 install  --root-user-action=ignore --disable-pip-version-check -I  $url
 else
-    sudo pip3 install --disable-pip-version-check -I $plugin_name
+    sudo pip3 install  --root-user-action=ignore --disable-pip-version-check -I $plugin_name
 fi
 
 
@@ -26,6 +26,6 @@ plugin_name_with_underscores=${plugin_name//-/_}
 
 crudini --merge /home/$USERNAME/.pioreactor/config.ini < /usr/local/lib/python3.9/dist-packages/$plugin_name_with_underscores/additional_config.ini
 rsync -a /usr/local/lib/python3.9/dist-packages/$plugin_name_with_underscores/ui/contrib/ /home/$USERNAME/pioreactorui/backend/contrib/
-
+pios sync-configs
 
 exit 0
