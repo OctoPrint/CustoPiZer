@@ -1,21 +1,21 @@
 #!/bin/bash
 
 # arg1 is the name of the plugin to install
-# arg2 is the git url, possible None.
+# arg2 is the url, wheel, etc., possible None.
 set -e
 set -x
 export LC_ALL=C
 
 USERNAME=pioreactor
 plugin_name=$1
-url=$2
+other=$2
 
 
-if [ ! -z $url ]
+if [ ! -z $other ]
 then
-    sudo pip3 install  --root-user-action=ignore --disable-pip-version-check -I  $url
+    sudo pip3 install -U --root-user-action=ignore --disable-pip-version-check -I $other
 else
-    sudo pip3 install  --root-user-action=ignore --disable-pip-version-check -I $plugin_name
+    sudo pip3 install -U --root-user-action=ignore --disable-pip-version-check -I $plugin_name
 fi
 
 

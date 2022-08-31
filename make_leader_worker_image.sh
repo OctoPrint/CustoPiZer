@@ -5,7 +5,7 @@
 GIT_COMMIT="$(git show --format="%h" --no-patch)"
 DATE=$(date '+%Y-%m-%d')
 
-OUTPUT=pioreactor_worker_leader_$DATE.img.zip
+OUTPUT=pioreactor_worker_leader.img.zip
 
 rm -f workspace/$OUTPUT
 

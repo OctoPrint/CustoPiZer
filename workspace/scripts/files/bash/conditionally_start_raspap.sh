@@ -21,13 +21,14 @@ if [[ (-f $WPA_FILE) && $(raspi-gpio get $RASPAP_TRIGGER_OFF_PIN | cut -d " " -f
     # only execute if is enabled
     if [[ $(systemctl is-enabled hostapd.service) == "enabled" ]]; then
         # this order seems to be important.
-        systemctl disable raspapd.service --now
-        systemctl disable hostapd.service --now
+        systemctl disable raspapd.service
+        systemctl disable hostapd.service
         cp /etc/raspap/backups/dhcpcd.conf.original /etc/dhcpcd.conf
         systemctl daemon-reload
         systemctl restart wpa_supplicant.service
         systemctl restart dhcpcd.service
-        pio log -m "Turning off hotspot" -n raspap
+        pio log -m "Turning off hotspot and rebooting" -n raspap
+        sudo systemctl reboot
     fi
 fi
 
@@ -38,8 +39,9 @@ if [[ (! -f $WPA_FILE) || $(raspi-gpio get $RASPAP_TRIGGER_ON_PIN | cut -d " " -
         cp /etc/raspap/backups/dhcpcd.conf.raspap /etc/dhcpcd.conf
         systemctl daemon-reload
         systemctl restart dhcpcd.service
-        systemctl enable raspapd.service --now
-        systemctl enable hostapd.service --now
-        pio log -m "Turning on hotspot" -n raspap
+        systemctl enable raspapd.service
+        systemctl enable hostapd.service
+        pio log -m "Turning on hotspot and rebooting" -n raspap
+        sudo systemctl reboot
     fi
 fi
