@@ -12,6 +12,7 @@ INSTALLER=https://raw.githubusercontent.com/Pioreactor/raspap-webgui/master/inst
 
 
 if [ "$LEADER" == "1" ]; then
+    sudo cp /etc/dhcpcd.conf /etc/dhcpcd.conf.original
 
     # we modified the installer slightly to work with qemu. It's possible we
     curl -sL $INSTALLER | bash -s -- --yes --openvpn 0 --adblock 0 --repo Pioreactor/raspap-webgui --branch master
@@ -29,6 +30,6 @@ if [ "$LEADER" == "1" ]; then
 
     # swap back old dhcpcd file
     sudo mv /etc/dhcpcd.conf /etc/raspap/backups/dhcpcd.conf.raspap
-    sudo cp /etc/raspap/backups/dhcpcd.conf /etc/raspap/backups/dhcpcd.conf.original
+    sudo mv /etc/dhcpcd.conf.original /etc/raspap/backups/dhcpcd.conf.original
     sudo mv /etc/raspap/backups/dhcpcd.conf.original /etc/dhcpcd.conf
 fi
