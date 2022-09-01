@@ -31,5 +31,5 @@ if [ "$LEADER" == "1" ]; then
     # swap back old dhcpcd file
     sudo mv /etc/dhcpcd.conf /etc/raspap/backups/dhcpcd.conf.raspap
     sudo mv /etc/dhcpcd.conf.original /etc/raspap/backups/dhcpcd.conf.original
-    sudo mv /etc/raspap/backups/dhcpcd.conf.original /etc/dhcpcd.conf
+    sudo cp /etc/raspap/backups/dhcpcd.conf.original /etc/dhcpcd.conf
 fi

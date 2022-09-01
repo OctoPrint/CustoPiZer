@@ -4,9 +4,9 @@ Before=network-pre.target
 Wants=network-pre.target
 
 [Service]
-ExecStart=sudo /usr/bin/bash /usr/local/bin/conditionally_start_raspap.sh
+ExecStart=/bin/bash /usr/local/bin/conditionally_start_raspap.sh
 ExecStartPost=pio log -m "%n successful" -n systemd
 Type=oneshot
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=network.target

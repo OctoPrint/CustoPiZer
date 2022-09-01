@@ -5,8 +5,8 @@ After=network.target
 ConditionFileNotEmpty=/usr/local/bin/firstboot.sh
 
 [Service]
-ExecStart=sudo bash /usr/local/bin/firstboot.sh
-ExecStartPost=sudo /bin/mv /usr/local/bin/firstboot.sh /usr/local/bin/firstboot.sh.done
+ExecStart=/bin/bash /usr/local/bin/firstboot.sh
+ExecStartPost=/bin/mv /usr/local/bin/firstboot.sh /usr/local/bin/firstboot.sh.done
 ExecStartPost=pio log -m "%n successful" -n systemd
 Type=oneshot
 RemainAfterExit=no

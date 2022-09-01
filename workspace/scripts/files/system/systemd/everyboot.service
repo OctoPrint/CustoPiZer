@@ -1,10 +1,10 @@
 [Unit]
-Description=Runs everyboot.sh on the first boot of the Raspberry Pi. If successful, it will modify itself to not run again.
+Description=Runs everyboot.sh on every boot of the Raspberry Pi.
 Before=rc-local.service
 After=network.target
 
 [Service]
-ExecStart=sudo bash /usr/local/bin/everyboot.sh
+ExecStart=/bin/bash /usr/local/bin/everyboot.sh
 Type=oneshot
 RemainAfterExit=no
 
