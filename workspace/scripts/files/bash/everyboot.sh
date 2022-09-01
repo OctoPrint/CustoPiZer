@@ -11,6 +11,6 @@ export LC_ALL=C
 # and the delete it.
 if [ -e "/boot/config.ini" ]; then
     crudini --merge /home/pioreactor/.pioreactor/config.ini < /boot/config.ini
-    pio log -m "merged /boot/config.ini into config.ini"
+    pio log -m "merged /boot/config.ini into config.ini" --local-only
     rm /boot/config.ini
 fi

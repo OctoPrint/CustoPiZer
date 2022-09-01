@@ -5,7 +5,7 @@ Wants=network-pre.target
 
 [Service]
 ExecStart=/bin/bash /usr/local/bin/conditionally_start_raspap.sh
-ExecStartPost=pio log -m "%n successful" -n systemd
+ExecStartPost=pio log -m "%n successful" -n systemd --local-only
 Type=oneshot
 
 [Install]
