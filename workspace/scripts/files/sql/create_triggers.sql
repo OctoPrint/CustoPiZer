@@ -5,8 +5,8 @@
 
 CREATE TRIGGER update_pioreactor_unit_activity_data_from_od_readings AFTER INSERT ON od_readings
 BEGIN
-    INSERT INTO pioreactor_unit_activity_data(pioreactor_unit,experiment,timestamp,od_reading_v) VALUES (new.pioreactor_unit, new.experiment, new.timestamp, new.od_reading_v)
-    ON CONFLICT(experiment, pioreactor_unit, timestamp) DO UPDATE SET od_reading_v=excluded.od_reading_v;
+    INSERT INTO pioreactor_unit_activity_data(pioreactor_unit,experiment,timestamp,od_reading) VALUES (new.pioreactor_unit, new.experiment, new.timestamp, new.od_reading)
+    ON CONFLICT(experiment, pioreactor_unit, timestamp) DO UPDATE SET od_reading=excluded.od_reading;
 END;
 
 

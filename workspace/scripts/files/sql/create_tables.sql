@@ -186,7 +186,7 @@ CREATE TABLE IF NOT EXISTS od_blanks (
     timestamp                TEXT NOT NULL,
     channel                  TEXT CHECK( channel IN ('1', '2')) NOT NULL,
     angle                    INTEGER NOT NULL,
-    od_reading_v             REAL NOT NULL
+    od_reading               REAL NOT NULL
 );
 
 
@@ -239,7 +239,7 @@ CREATE TABLE IF NOT EXISTS pioreactor_unit_activity_data (
     experiment               TEXT NOT NULL,
     pioreactor_unit          TEXT NOT NULL,
     timestamp                TEXT NOT NULL,
-    od_reading_v             REAL,
+    od_reading               REAL,
     normalized_od_reading    REAL,
     temperature_c            REAL,
     growth_rate              REAL,
