@@ -3,14 +3,14 @@
 
 ###### ETL triggers for pioreactor_unit_activity_data
 
-CREATE TRIGGER update_pioreactor_unit_activity_data_from_od_readings_raw AFTER INSERT ON od_readings_raw
+CREATE TRIGGER update_pioreactor_unit_activity_data_from_od_readings AFTER INSERT ON od_readings
 BEGIN
     INSERT INTO pioreactor_unit_activity_data(pioreactor_unit,experiment,timestamp,od_reading_v) VALUES (new.pioreactor_unit, new.experiment, new.timestamp, new.od_reading_v)
     ON CONFLICT(experiment, pioreactor_unit, timestamp) DO UPDATE SET od_reading_v=excluded.od_reading_v;
 END;
 
 
-CREATE TRIGGER update_pioreactor_unit_activity_data_from_od_readings_filtered_raw AFTER INSERT ON od_readings_filtered
+CREATE TRIGGER update_pioreactor_unit_activity_data_from_od_readings_filtered AFTER INSERT ON od_readings_filtered
 BEGIN
     INSERT INTO pioreactor_unit_activity_data(pioreactor_unit,experiment,timestamp,normalized_od_reading) VALUES (new.pioreactor_unit, new.experiment, new.timestamp, new.normalized_od_reading)
     ON CONFLICT(experiment, pioreactor_unit, timestamp) DO UPDATE SET normalized_od_reading=excluded.normalized_od_reading;
