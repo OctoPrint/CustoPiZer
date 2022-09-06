@@ -8,7 +8,7 @@ export LC_ALL=C
 USERNAME=pioreactor
 PIO_DIR=/home/$USERNAME/.pioreactor
 SSH_DIR=/home/$USERNAME/.ssh
-DB_LOC=/home/$USERNAME/.pioreactor/storage/pioreactor.sqlite
+DB_LOC=$(crudini --get $PIO_DIR/config.ini storage database)
 
 sudo -u $USERNAME rm -rf $SSH_DIR # remove if already exists.
 
