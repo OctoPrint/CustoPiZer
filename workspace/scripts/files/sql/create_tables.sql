@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS alt_media_fractions (
     experiment               TEXT NOT NULL,
     pioreactor_unit          TEXT NOT NULL,
     timestamp                TEXT NOT NULL,
-    alt_media_fraction       REAL  NOT NULL
+    alt_media_fraction       REAL NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS alt_media_fractions_ix
@@ -36,9 +36,9 @@ ON od_readings_filtered (experiment);
 
 
 CREATE TABLE IF NOT EXISTS dosing_events (
-    experiment               TEXT NOT NULL,
-    pioreactor_unit          TEXT NOT NULL,
-    timestamp                TEXT NOT NULL,
+    experiment               TEXT  NOT NULL,
+    pioreactor_unit          TEXT  NOT NULL,
+    timestamp                TEXT  NOT NULL,
     event                    TEXT  NOT NULL,
     volume_change_ml         REAL  NOT NULL,
     source_of_event          TEXT
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS led_change_events (
     experiment             TEXT                                       NOT NULL,
     pioreactor_unit        TEXT                                       NOT NULL,
     timestamp              TEXT                                       NOT NULL,
-    channel                TEXT CHECK( channel IN ('A','B','C', 'D')) NOT NULL,
+    channel                TEXT CHECK(channel IN ('A','B','C','D'))   NOT NULL,
     intensity              REAL                                       NOT NULL,
     source_of_event        TEXT
 );

@@ -1,8 +1,3 @@
-
-
-
-###### ETL triggers for pioreactor_unit_activity_data
-
 CREATE TRIGGER update_pioreactor_unit_activity_data_from_od_readings AFTER INSERT ON od_readings
 BEGIN
     INSERT INTO pioreactor_unit_activity_data(pioreactor_unit,experiment,timestamp,od_reading) VALUES (new.pioreactor_unit, new.experiment, new.timestamp, new.od_reading)
@@ -70,5 +65,3 @@ BEGIN
         add_alt_media_ml=COALESCE(excluded.volume_change_ml, pioreactor_unit_activity_data.add_alt_media_ml)
     ;
 END;
-
-################################################################
