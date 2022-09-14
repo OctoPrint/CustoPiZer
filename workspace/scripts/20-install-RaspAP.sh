@@ -16,9 +16,7 @@ if [ "$LEADER" == "1" ]; then
 
     # we modified the installer slightly to work with qemu. It's possible we
     curl -sL $INSTALLER | bash -s -- --yes --openvpn 0 --adblock 0 --repo Pioreactor/raspap-webgui --branch master
-
-    # change port of webserver to not conflict with pioreactor.local
-    sed -i "s/server.port                 = 80/server.port                 = 8080/" /etc/lighttpd/lighttpd.conf
+    lighttpd-disable-mod raspap-router
 
     # change the dns server to AP machine. This IP is coded by RaspAP.
     sed -i "s/dhcp-option=6.*$/dhcp-option=6,10.3.141.1/" /etc/dnsmasq.d/090_wlan0.conf

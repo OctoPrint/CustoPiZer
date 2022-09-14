@@ -31,8 +31,10 @@ if [ "$LEADER" == "1" ]; then
     sudo systemctl enable pioreactor_startup_run_always@mqtt_to_db_streaming.service
 
     # systemd: alias hostname to pioreactor.local
-    sudo cp /files/system/systemd/avahi_alias.service $SYSTEMD_DIR
-    sudo systemctl enable avahi_alias.service
+    sudo cp /files/system/systemd/avahi_aliases.service $SYSTEMD_DIR
+    sudo systemctl enable avahi_aliases.service
+    cp /files/bash/avahi_aliases.sh /usr/local/bin/avahi_aliases.sh
+
 
     # add avahi services
     sudo cp /files/system/avahi/mqtt.service /etc/avahi/services/

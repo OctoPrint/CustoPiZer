@@ -13,9 +13,9 @@ other=$2
 
 if [ ! -z $other ]
 then
-    sudo pip3 install -U --root-user-action=ignore --disable-pip-version-check -I $other
+    sudo pip3 install -U --root-user-action=ignore -I $other
 else
-    sudo pip3 install -U --root-user-action=ignore --disable-pip-version-check -I $plugin_name
+    sudo pip3 install -U --root-user-action=ignore -I $plugin_name
 fi
 
 
