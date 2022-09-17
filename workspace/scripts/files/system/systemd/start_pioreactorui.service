@@ -5,7 +5,6 @@ After=network.target network-online.target
 
 [Service]
 User=pioreactor
-ExecStartPre=sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 9000
 ExecStart=pm2 start app.js --name ui --time
 ExecStartPost=pio log -m "%n successful" -n systemd
 WorkingDirectory=/home/pioreactor/pioreactorui/backend

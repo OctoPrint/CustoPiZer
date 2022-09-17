@@ -19,6 +19,7 @@ if [ "$LEADER" == "1" ]; then
     DB_LOC=/home/$USERNAME/.pioreactor/storage/pioreactor.sqlite
 
     sudo -u $USERNAME touch $DB_LOC
+    chmod 666 $DB_LOC
     sqlite3 $DB_LOC < /files/sql/sqlite_configuration.sql
     sqlite3 $DB_LOC < /files/sql/create_tables.sql
     sqlite3 $DB_LOC < /files/sql/create_triggers.sql

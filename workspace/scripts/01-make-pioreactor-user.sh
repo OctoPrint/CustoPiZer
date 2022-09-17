@@ -15,3 +15,4 @@ chpasswd <<<"$USERNAME:$PASS"
 usermod -a -G gpio $USERNAME
 usermod -a -G spi $USERNAME
 usermod -a -G i2c $USERNAME
+usermod -a -G www-data $USERNAME
