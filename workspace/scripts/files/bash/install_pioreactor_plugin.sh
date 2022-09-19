@@ -25,7 +25,7 @@ set +e
 plugin_name_with_underscores=${plugin_name//-/_}
 
 crudini --merge /home/$USERNAME/.pioreactor/config.ini < /usr/local/lib/python3.9/dist-packages/$plugin_name_with_underscores/additional_config.ini
-rsync -a /usr/local/lib/python3.9/dist-packages/$plugin_name_with_underscores/ui/contrib/ /home/$USERNAME/pioreactorui/backend/contrib/
+rsync -a /usr/local/lib/python3.9/dist-packages/$plugin_name_with_underscores/ui/contrib/ /var/www/pioreactorui/backend/contrib/
 pios sync-configs
 
 exit 0

@@ -5,7 +5,7 @@ After=network.target
 [Service]
 User=pioreactor
 WorkingDirectory=/var/www/pioreactorui
-ExecStart=huey_consumer tasks.huey -l /var/log/pioreactorui.log
+ExecStart=huey_consumer tasks.huey
 Restart=always
 
 [Install]
