@@ -6,8 +6,7 @@ After=network-online.target start_raspap.service
 [Service]
 ExecStart=/bin/bash /usr/local/bin/avahi_aliases.sh
 ExecStartPost=pio log -m "%n successful" -n systemd
-Type=simple
-RuntimeMaxSec=14400
+Type=forking
 
 [Install]
 WantedBy=multi-user.target
