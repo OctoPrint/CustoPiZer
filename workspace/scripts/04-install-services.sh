@@ -23,16 +23,21 @@ if [ "$LEADER" == "1" ]; then
     sudo cp /files/system/systemd/ngrok.service $SYSTEMD_DIR
 
     # systemd: web UI
-    sudo cp /files/system/systemd/start_pioreactorui.service $SYSTEMD_DIR
-    sudo systemctl enable start_pioreactorui.service
+    # sudo cp /files/system/systemd/start_pioreactorui.service $SYSTEMD_DIR
+    # sudo systemctl enable start_pioreactorui.service
+    # TODO: do I need a lighttp service??
+    sudo cp /files/system/systemd/huey.service $SYSTEMD_DIR
+    sudo systemctl enable huey.service
 
     # systemd: add long running pioreactor jobs
     sudo systemctl enable pioreactor_startup_run_always@watchdog.service
     sudo systemctl enable pioreactor_startup_run_always@mqtt_to_db_streaming.service
 
     # systemd: alias hostname to pioreactor.local
-    sudo cp /files/system/systemd/avahi_alias.service $SYSTEMD_DIR
-    sudo systemctl enable avahi_alias.service
+    sudo cp /files/system/systemd/avahi_aliases.service $SYSTEMD_DIR
+    sudo systemctl enable avahi_aliases.service
+    cp /files/bash/avahi_aliases.sh /usr/local/bin/avahi_aliases.sh
+
 
     # add avahi services
     sudo cp /files/system/avahi/mqtt.service /etc/avahi/services/

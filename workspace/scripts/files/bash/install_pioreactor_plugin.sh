@@ -13,9 +13,9 @@ other=$2
 
 if [ ! -z $other ]
 then
-    sudo pip3 install -U --root-user-action=ignore --disable-pip-version-check -I $other
+    sudo pip3 install -U --root-user-action=ignore -I $other
 else
-    sudo pip3 install -U --root-user-action=ignore --disable-pip-version-check -I $plugin_name
+    sudo pip3 install -U --root-user-action=ignore -I $plugin_name
 fi
 
 
@@ -25,7 +25,7 @@ set +e
 plugin_name_with_underscores=${plugin_name//-/_}
 
 crudini --merge /home/$USERNAME/.pioreactor/config.ini < /usr/local/lib/python3.9/dist-packages/$plugin_name_with_underscores/additional_config.ini
-rsync -a /usr/local/lib/python3.9/dist-packages/$plugin_name_with_underscores/ui/contrib/ /home/$USERNAME/pioreactorui/backend/contrib/
+rsync -a /usr/local/lib/python3.9/dist-packages/$plugin_name_with_underscores/ui/contrib/ /var/www/pioreactorui/contrib/
 pios sync-configs
 
 exit 0

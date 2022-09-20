@@ -1,2 +1,2 @@
 0 0 */5 * * /usr/local/bin/pio run backup_database
-0 0 */29 * * rm /home/pioreactorui/backend/build/static/exports/*.zip /home/pioreactorui/backend/build/static/exports/*.csv
+0 0 */29 * * rm /var/www/pioreactorui/static/exports/*.zip /var/www/pioreactorui/static/exports/*.csv
