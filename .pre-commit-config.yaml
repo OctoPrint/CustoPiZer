@@ -1,5 +1,6 @@
+repos:
 - repo: https://github.com/jumanjihouse/pre-commit-hooks
-  rev: master  # or specific git tag
+  rev: 3.0.0  # or specific git tag
   hooks:
     - id: script-must-have-extension
     - id: script-must-not-have-extension
