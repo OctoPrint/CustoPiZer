@@ -1,7 +1,7 @@
 [Unit]
 Description=Publish an alias for %H.local via mdns
 Wants=network-online.target
-After=network-online.target start_raspap.service
+After=network-online.target start_raspap.service avahi-daemon.service
 
 [Service]
 ExecStart=/bin/bash /usr/local/bin/avahi_aliases.sh
