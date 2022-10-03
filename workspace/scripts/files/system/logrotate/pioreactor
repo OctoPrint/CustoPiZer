@@ -4,5 +4,5 @@
     rotate 10
     compress
     notifempty
-    create 0640 pioreactor pioreactor
+    create 0660 pioreactor pioreactor
 }

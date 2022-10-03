@@ -1,3 +1,5 @@
+#!/bin/bash
+
 set -x
 set -e
 
@@ -11,5 +13,5 @@ USERNAME=pioreactor
 
 
 if [ "$LEADER" == "1" ]; then
-    crontab -u pioreactor /files/pioreactor.cron
+    crontab -u "$USERNAME" /files/pioreactor.cron
 fi

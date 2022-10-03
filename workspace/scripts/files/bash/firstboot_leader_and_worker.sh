@@ -28,11 +28,12 @@ crudini --set $PIO_DIR/config.ini cluster.topology leader_hostname $(hostname)
 crudini --set $PIO_DIR/config.ini cluster.topology leader_address $(hostname).local
 
 sqlite3 $DB_LOC "INSERT OR IGNORE INTO experiments (created_at, experiment, description) VALUES (STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW'), 'Demo experiment', 'This is a demo experiment. Feel free to click around. When you are ready, click the [New experiment] above.');"
-mosquitto_pub -t "pioreactor/latest_experiment" -m "Demo experiment" -r -q 1
+mosquitto_pub -t "pioreactor/latest_experiment/experiment" -m "Demo experiment" -r -q 1
+mosquitto_pub -t "pioreactor/latest_experiment/created_at" -m $(date -u +"%Y-%m-%dT%H:%M:%SZ") -r -q 1
 
 
 
 sudo -u $USERNAME touch $PIO_DIR/config_$(hostname).ini # set with the correct read/write permissions
-printf "# Any settings here are specific to $(hostname), and override the settings in config.ini\n\n" >> $PIO_DIR/config_$(hostname).ini
-cp $PIO_DIR/config_$(hostname).ini $PIO_DIR/unit_config.ini
-crudini --set $PIO_DIR/config.ini cluster.inventory $(hostname) 1
+printf '# Any settings here are specific to %s, and override the settings in config.ini\n\n' "$(hostname)" >> $PIO_DIR/config_$(hostname).ini
+cp "$PIO_DIR/config_$(hostname).ini" "$PIO_DIR/unit_config.ini"
+crudini --set "$PIO_DIR/config.ini" cluster.inventory "$(hostname)" 1
