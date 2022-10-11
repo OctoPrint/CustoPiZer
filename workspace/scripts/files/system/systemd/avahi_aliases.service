@@ -7,7 +7,7 @@ After=network-online.target start_raspap.service avahi-daemon.service
 ExecStart=/bin/bash /usr/local/bin/avahi_aliases.sh
 ExecStartPost=pio log -m "%n successful" -n systemd
 Type=forking
-Restart=always
+Restart=on-abnormal
 RuntimeMaxSec=1d
 
 [Install]

@@ -11,7 +11,6 @@ plugin_name=$1
 other=$2
 install_folder=/usr/local/lib/python3.9/dist-packages/${plugin_name//-/_}
 
-
 if [ -n "$other" ]
 then
     sudo pip3 install -U --root-user-action=ignore -I "$other"
@@ -27,7 +26,7 @@ set +e
 crudini --merge /home/$USERNAME/.pioreactor/config.ini < "$install_folder/additional_config.ini"
 
 # add any new sql
-sqlite3 $(crudini --get /home/pioreactor/.pioreactor/config.ini storage database) < "$install_folder/additional_sql.sql"
+sqlite3 "$(crudini --get /home/pioreactor/.pioreactor/config.ini storage database)" < "$install_folder/additional_sql.sql"
 
 # merge UI contribs
 rsync -a "$install_folder/ui/contrib/" /var/www/pioreactorui/contrib/
