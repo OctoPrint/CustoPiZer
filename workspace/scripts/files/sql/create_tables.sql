@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS od_readings (
     timestamp                TEXT NOT NULL,
     od_reading               REAL     NOT NULL,
     angle                    INTEGER  NOT NULL,
-    channel                  TEXT CHECK( channel IN ('1', '2')) NOT NULL
+    channel                  INTEGER CHECK( channel IN (1, 2)) NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS od_readings_ix
