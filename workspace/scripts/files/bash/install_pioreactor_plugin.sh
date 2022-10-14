@@ -13,9 +13,9 @@ install_folder=/usr/local/lib/python3.9/dist-packages/${plugin_name//-/_}
 
 if [ -n "$other" ]
 then
-    sudo pip3 install -U --root-user-action=ignore -I "$other"
+    sudo pip3 install -U --force-reinstall --root-user-action=ignore -I "$other"
 else
-    sudo pip3 install -U --root-user-action=ignore -I "$plugin_name"
+    sudo pip3 install -U --force-reinstall --root-user-action=ignore -I "$plugin_name"
 fi
 
 
