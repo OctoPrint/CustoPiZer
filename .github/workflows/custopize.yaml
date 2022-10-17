@@ -61,7 +61,7 @@ jobs:
       uses: Pioreactor/CustoPiZer@pioreactor
       with:
         workspace: "${{ github.workspace }}/build"
-        scripts:  "${{ github.workspace }}/workspace/scripts_NULL"
+        scripts:  "${{ github.workspace }}/workspace/scripts"
         config: "${{ github.workspace }}/config.local"
         environment: '{ "PIO_VERSION": "${{ env.PIOREACTOR_VERSION }}", "LEADER": 1, "WORKER": 1 }'
     
@@ -78,7 +78,7 @@ jobs:
       with:
         image_path: "build/${{ env.IMAGE_LEADER_WORKER }}"
 
-    - name: 📨 Export zip name to env
+    - name: 📨 Export zip name to env LW
       run: |
         echo "IMAGE_LEADER_WORKER_ZIP=${{ steps.package-image-lw.outputs.zip_name }}" >> $GITHUB_ENV
 
@@ -88,7 +88,7 @@ jobs:
       uses: Pioreactor/CustoPiZer@pioreactor
       with:
         workspace: "${{ github.workspace }}/build"
-        scripts:  "${{ github.workspace }}/workspace/scripts_NULL"
+        scripts:  "${{ github.workspace }}/workspace/scripts"
         config: "${{ github.workspace }}/config.local"
         environment: '{ "PIO_VERSION": "${{ env.PIOREACTOR_VERSION }}", "LEADER": 0, "WORKER": 1 }'
 
@@ -105,7 +105,7 @@ jobs:
       with:
         image_path: "build/${{ env.IMAGE_WORKER }}"
 
-    - name: 📨 Export zip name to env
+    - name: 📨 Export zip name to env W
       run: |
         echo "IMAGE_WORKER_ZIP=${{ steps.package-image-w.outputs.zip_name }}" >> $GITHUB_ENV
 
