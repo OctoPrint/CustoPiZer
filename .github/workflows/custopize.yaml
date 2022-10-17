@@ -1,0 +1,94 @@
+name: "CustoPiZe"
+
+on:
+  repository_dispatch:
+    types: pioreactor_release
+  workflow_dispatch:
+    inputs:
+      pioreactor_version:
+        description: "Pioreactor version"
+        required: true
+        default: ''
+
+jobs:
+  build:
+    name: "Build"
+    runs-on: ubuntu-latest
+    outputs:
+      pioreactor-version: ${{ env.PIOREACTOR_VERSION }}
+      tag: ${{ env.RELEASE_TAG }}
+      image-zip: ${{ env.IMAGE_ZIP }}
+      image-url: ${{ env.IMAGE_URL }}
+    steps:
+
+    - name: "⬇ Checkout"
+      uses: actions/checkout@v2
+
+    - name: "🔎 Determine Pioreactor version"
+      run: |
+        if [[ "${{ github.event_name }}" = "repository_dispatch" && "${{ github.event.action }}" = "pioreactor_release" ]]; then
+          PIOREACTOR_VERSION="${{ github.event.client_payload.version }}"
+          echo "Version from repository dispatch: $PIOREACTOR_VERSION"
+        else
+          PIOREACTOR_VERSION="${{ github.event.inputs.pioreactor_version }}"
+          echo "Version from workflow dispatch: $PIOREACTOR_VERSION"
+        fi
+        echo "PIOREACTOR_VERSION=$PIOREACTOR_VERSION" >> $GITHUB_ENV
+    - name: "⬇ Download RPi image"
+      id: download_rpi_image
+      run: |
+        mkdir build
+        cd build
+        wget https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2022-09-26/2022-09-22-raspios-bullseye-armhf-lite.img.xz -O input.img.xz
+        unxz input.img.xz
+    - name: "📝 Prepare release"
+      run: |
+        now=$(date +"%Y%m%d%H%M%S")
+        RELEASE_NAME="Pioreactor ${{ env.PIOREACTOR_VERSION }} (build $now)"
+        echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
+        RELEASE_TAG="${{ env.PIOREACTOR_VERSION }}-$now"
+        echo "RELEASE_TAG=$RELEASE_TAG" >> $GITHUB_ENV
+        
+        # release body
+        cat <<EOF > ./build/release.md
+  
+          * Pioreactor ${{ env.PIOREACTOR_VERSION }}
+
+        Created with [CustoPiZer](https://github.com/Pioreactor/CustoPiZer)
+
+        <!-- mark:untested -->
+        EOF
+
+    - name: "🏗 Run CustoPiZer"
+      uses: Pioreactor/CustoPiZer@pioreactor
+      with:
+        workspace: "${{ github.workspace }}/build"
+        scripts:  "${{ github.workspace }}/scripts"
+        environment: '{ "PIO_VERSION": "${{ env.PIOREACTOR_VERSION }}", "LEADER": 1, "WORKER": 1, "CUSTOPIZER_GIT_COMMIT": "XXXXX" }'
+    
+    - name: "✏ Rename image"
+      run: |
+        IMAGE="pioreactor_leader.img.zip"
+        echo "IMAGE=$IMAGE" >> $GITHUB_ENV
+        cd build
+        mv output.img $IMAGE
+    - name: "📦 Package the image"
+      id: package-image
+      uses: OctoPrint/actions/package-rpi-image@main
+      with:
+        image_path: "build/${{ env.IMAGE }}"
+
+    - name: "🔖 Create release & attach assets"
+      uses: softprops/action-gh-release@v1
+      with:
+        name: "${{ env.RELEASE_NAME }}"
+        tag_name: "${{ env.RELEASE_TAG }}"
+        body_path: "build/release.md"
+        prerelease: ${{ contains(env.PIOREACTOR_VERSION, 'rc') }}
+        fail_on_unmatched_files: true
+        files: |
+          build/${{ env.IMAGE_ZIP }}
+          build/${{ env.IMAGE_ZIP }}.md5
+          build/${{ env.IMAGE_ZIP }}.sha256
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
