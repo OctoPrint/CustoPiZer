@@ -14,11 +14,6 @@ jobs:
   build:
     name: "Build"
     runs-on: ubuntu-latest
-    outputs:
-      pioreactor-version: ${{ env.PIOREACTOR_VERSION }}
-      tag: ${{ env.RELEASE_TAG }}
-      image-zip: ${{ env.IMAGE_ZIP }}
-      image-url: ${{ env.IMAGE_URL }}
     steps:
 
     - name: "⬇ Checkout"
@@ -59,30 +54,63 @@ jobs:
         <!-- mark:untested -->
         EOF
 
-    - name: "🏗 Run CustoPiZer"
+
+
+
+    - name: "🏗 Run CustoPiZer LW"
       uses: Pioreactor/CustoPiZer@pioreactor
       with:
         workspace: "${{ github.workspace }}/build"
         scripts:  "${{ github.workspace }}/workspace/scripts_NULL"
         config: "${{ github.workspace }}/config.local"
-        environment: '{ "PIO_VERSION": "${{ env.PIOREACTOR_VERSION }}", "LEADER": 1, "WORKER": 1, "CUSTOPIZER_GIT_COMMIT": "XXXXX" }'
+        environment: '{ "PIO_VERSION": "${{ env.PIOREACTOR_VERSION }}", "LEADER": 1, "WORKER": 1 }'
     
-    - name: "✏ Rename image"
+    - name: "✏ Rename image LW"
       run: |
-        IMAGE="pioreactor_leader.img"
-        echo "IMAGE=$IMAGE" >> $GITHUB_ENV
+        IMAGE_LEADER_WORKER="pioreactor_leader_worker.img"
+        echo "IMAGE_LEADER_WORKER=$IMAGE_LEADER_WORKER" >> $GITHUB_ENV
         cd build
-        mv output.img $IMAGE
+        mv output.img $IMAGE_LEADER_WORKER
 
-    - name: "📦 Package the image"
-      id: package-image
+    - name: "📦 Package the image LW"
+      id: package-image-lw
       uses: OctoPrint/actions/package-rpi-image@main
       with:
-        image_path: "build/${{ env.IMAGE }}"
+        image_path: "build/${{ env.IMAGE_LEADER_WORKER }}"
 
     - name: 📨 Export zip name to env
       run: |
-        echo "IMAGE_ZIP=${{ steps.package-image.outputs.zip_name }}" >> $GITHUB_ENV
+        echo "IMAGE_LEADER_WORKER_ZIP=${{ steps.package-image-lw.outputs.zip_name }}" >> $GITHUB_ENV
+
+
+
+    - name: "🏗 Run CustoPiZer W"
+      uses: Pioreactor/CustoPiZer@pioreactor
+      with:
+        workspace: "${{ github.workspace }}/build"
+        scripts:  "${{ github.workspace }}/workspace/scripts_NULL"
+        config: "${{ github.workspace }}/config.local"
+        environment: '{ "PIO_VERSION": "${{ env.PIOREACTOR_VERSION }}", "LEADER": 0, "WORKER": 1 }'
+
+    - name: "✏ Rename image W"
+      run: |
+        IMAGE_WORKER="pioreactor_worker.img"
+        echo "IMAGE_WORKER=$IMAGE_WORKER" >> $GITHUB_ENV
+        cd build
+        mv output.img $IMAGE_WORKER
+
+    - name: "📦 Package the image W"
+      id: package-image-w
+      uses: OctoPrint/actions/package-rpi-image@main
+      with:
+        image_path: "build/${{ env.IMAGE_WORKER }}"
+
+    - name: 📨 Export zip name to env
+      run: |
+        echo "IMAGE_WORKER_ZIP=${{ steps.package-image-w.outputs.zip_name }}" >> $GITHUB_ENV
+
+
+
 
     - name: "🔖 Create release & attach assets"
       uses: softprops/action-gh-release@v1
@@ -93,8 +121,11 @@ jobs:
         prerelease: ${{ contains(env.PIOREACTOR_VERSION, 'rc') }}
         fail_on_unmatched_files: true
         files: |
-          build/${{ env.IMAGE_ZIP }}
-          build/${{ env.IMAGE_ZIP }}.md5
-          build/${{ env.IMAGE_ZIP }}.sha256
+          build/${{ env.IMAGE_LEADER_WORKER_ZIP }}
+          build/${{ env.IMAGE_LEADER_WORKER_ZIP }}.md5
+          build/${{ env.IMAGE_LEADER_WORKER_ZIP }}.sha256
+          build/${{ env.IMAGE_WORKER_ZIP }}
+          build/${{ env.IMAGE_WORKER_ZIP }}.md5
+          build/${{ env.IMAGE_WORKER_ZIP }}.sha256
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
