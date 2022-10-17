@@ -73,11 +73,16 @@ jobs:
         echo "IMAGE=$IMAGE" >> $GITHUB_ENV
         cd build
         mv output.img $IMAGE
+
     - name: "📦 Package the image"
       id: package-image
       uses: OctoPrint/actions/package-rpi-image@main
       with:
         image_path: "build/${{ env.IMAGE }}"
+
+    - name: 📨 Export zip name to env
+      run: |
+        echo "IMAGE_ZIP=${{ steps.package-image.outputs.zip_name }}" >> $GITHUB_ENV
 
     - name: "🔖 Create release & attach assets"
       uses: softprops/action-gh-release@v1
