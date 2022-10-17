@@ -39,7 +39,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        wget https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2022-09-26/2022-09-22-raspios-bullseye-armhf-lite.img.xz -O input.img.xz
+        wget https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2022-09-26/2022-09-22-raspios-bullseye-armhf-lite.img.xz -q -O input.img.xz
         unxz input.img.xz
     - name: "📝 Prepare release"
       run: |
@@ -62,13 +62,14 @@ jobs:
     - name: "🏗 Run CustoPiZer"
       uses: Pioreactor/CustoPiZer@pioreactor
       with:
-        workspace: "${{ github.workspace }}/build"
-        scripts:  "${{ github.workspace }}/scripts"
+        workspace: "${{ github.workspace }}/workspace"
+        scripts:  "${{ github.workspace }}/workspace/scripts"
+        config: "${{ github.workspace }}/config.local"
         environment: '{ "PIO_VERSION": "${{ env.PIOREACTOR_VERSION }}", "LEADER": 1, "WORKER": 1, "CUSTOPIZER_GIT_COMMIT": "XXXXX" }'
     
     - name: "✏ Rename image"
       run: |
-        IMAGE="pioreactor_leader.img.zip"
+        IMAGE="pioreactor_leader.img"
         echo "IMAGE=$IMAGE" >> $GITHUB_ENV
         cd build
         mv output.img $IMAGE
