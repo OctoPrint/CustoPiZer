@@ -63,7 +63,7 @@ jobs:
       uses: Pioreactor/CustoPiZer@pioreactor
       with:
         workspace: "${{ github.workspace }}/build"
-        scripts:  "${{ github.workspace }}/workspace/scripts"
+        scripts:  "${{ github.workspace }}/workspace/scripts_NULL"
         config: "${{ github.workspace }}/config.local"
         environment: '{ "PIO_VERSION": "${{ env.PIOREACTOR_VERSION }}", "LEADER": 1, "WORKER": 1, "CUSTOPIZER_GIT_COMMIT": "XXXXX" }'
     
