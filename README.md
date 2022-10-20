@@ -1,26 +1,22 @@
 # CustoPiZer for Pioreactor
 
+This repo contains the scripts to serially modify an original RPi image (say, from the RPi Foundation), to add Pioreactor software and files.
 
+### How does it work?
+
+When a new release is made in [pioreactor/pioreactor](https://github.com/Pioreactor/pioreactor), a dispatch is sent to this repo using Github Actions, including the version of Pioreactor software to use. A new workflow is kicked off that builds the images, creates a new release, and attaches the images to the release.
+
+The following url will point to a specific asset in the latest release:
 ```
-docker run --rm --privileged \
-    -e PIO_VERSION=21.11.1  \
-    -e LEADER=1\
-    -e WORKER=1\
-    -v /path/to/workspace:/CustoPiZer/workspace/\
-    -v /path/to/config.local:/CustoPiZer/config.local\
-    ghcr.io/octoprint/custopizer:latest \
-    && mv output.img pioreactor_leader_worker.img
-    && zip workspace/pioreactor_leader_worker.img.zip workspace/pioreactor_leader_worker.img
+https://github.com/pioreactor/custopizer/releases/latest/download/<asset_name>
 ```
 
 
-### FAQ
 
-1. How do I update to the image to the latest Pioreactor version?
+### Local build:
 
-Change the arg in the invocation.
+With docker running:
 
-2. How do I change the output name?
-
-`EDITBASE_OUTPUT_NAME` - but I need to rebuild the docker image so it's **not working**.
-
+```
+bash make_leader_image <version>
+```
