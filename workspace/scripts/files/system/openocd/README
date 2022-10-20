@@ -1,0 +1,12 @@
+README
+
+The Raspberry Pi foundation maintains a fork of OpenOCD: https://github.com/raspberrypi/openocd that has the parts for working with the RP2040.
+
+Following their instructions in Chapter 5 in [https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf](https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf), we can download OpenOCD, build it, and execute it.  
+
+In fact, the executable can be used in other RPis, something we take advantage of: our Pioreactor image has this executable.
+
+The executable `openocd` was compiled on the Raspberry Pi:
+
+Operating system:       Linux-5.15.61-v7+-armv7l-with-glibc2.31
+Raspberry Pi:           Raspberry Pi 3 Model B Rev 1.2

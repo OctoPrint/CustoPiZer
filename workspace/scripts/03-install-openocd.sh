@@ -14,8 +14,7 @@ if [ "$WORKER" == "1" ]; then
     apt-get install -y libftdi-dev libusb-1.0-0-dev
 
     # move executable
-    mkdir /usr/local/bin/openocd/
-    cp /files/system/openocd/openocd /usr/local/bin/openocd/
+    cp /files/system/openocd/openocd /usr/local/bin/
 
     # move config
     mkdir /usr/local/share/openocd/
