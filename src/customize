@@ -150,6 +150,14 @@ pushd $EDITBASE_WORKSPACE
       restoreLd
     fi
   popd
+
+  # if there are any files to export, do that now and clean up the export folder
+  if [ -d "$EDITBASE_MOUNT_PATH/export" ]; then
+    pushd $EDITBASE_WORKSPACE
+      copy_files "$EDITBASE_MOUNT_PATH/export"
+    popd
+    rm -rf "$EDITBASE_MOUNT_PATH/export"
+  fi
   
   # unmount first boot, then root partition
   unmount_image $EDITBASE_MOUNT_PATH
