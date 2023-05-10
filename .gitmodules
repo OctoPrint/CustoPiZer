@@ -1,0 +1,3 @@
+[submodule "submodules/CustoPiZerUtils"]
+	path = submodules/CustoPiZerUtils
+	url = https://github.com/Koutoulakis/CustoPiZerUtils.git
