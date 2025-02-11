@@ -18,6 +18,10 @@ inputs:
     description: "Additional environment variables to pass to the docker call, as JSON object, e.g. {'OCTOPRINT_VERSION': '1.7.0', 'OTHER_VAR': 'value'}"
     required: false
     default: '{}'
+  nameservers:
+    description: "Optional nameservers to use in docker, e.g. '8.8.8.8'"
+    required: false
+    default: ''
 runs:
   using: "composite"
   steps:
@@ -31,7 +35,13 @@ runs:
         fi
 
         envs=$(echo '${{ inputs.environment }}' | jq -r 'to_entries | map("-e " + .key + "=" + (.value | tostring)) | join(" ")')
-        command="--rm --privileged $envs -v ${{ inputs.workspace }}:/CustoPiZer/workspace -v ${{ inputs.scripts }}:/CustoPiZer/workspace/scripts $config_mount ghcr.io/octoprint/custopizer:latest"
+        
+        dns_option=''
+        if [ -n "${{ inputs.nameservers }}" ]; then
+          dns_option="--dns ${{ inputs.nameservers }}"
+        fi
+        
+        command="--rm --privileged $envs $dns_option -v ${{ inputs.workspace }}:/CustoPiZer/workspace -v ${{ inputs.scripts }}:/CustoPiZer/workspace/scripts $config_mount ghcr.io/octoprint/custopizer:latest"
 
         echo "About to execute 'docker run $command'..."
 
