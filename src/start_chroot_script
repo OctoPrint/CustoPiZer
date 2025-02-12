@@ -13,13 +13,15 @@ export LC_ALL=C
 source /common.sh
 install_cleanup_trap
 
-if [ "${EDITBASE_DISTRO}" == "ubuntu" ]; then
-  unpack /filesystem/ubuntu / root
-
+if [[ "${EDITBASE_DISTRO}" == "armbian" || "${EDITBASE_DISTRO}" == "ubuntu" ]]; then
   mv /etc/resolv.conf /etc/resolv.conf.orig || true
   echo "nameserver 8.8.8.8" > /etc/resolv.conf
   echo "nameserver 8.8.4.4" >> /etc/resolv.conf
   echo "nameserver 1.1.1.1" >> /etc/resolv.conf
+fi
+
+if [ "${EDITBASE_DISTRO}" == "ubuntu" ]; then
+  unpack /filesystem/ubuntu / root
   
   apt-get update --allow-releaseinfo-change
   apt-get install -y net-tools wireless-tools dhcpcd5
