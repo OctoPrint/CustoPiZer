@@ -1,9 +1,9 @@
 # syntax=docker/dockerfile:1
-ARG VERSION="bullseye-backports"
+ARG VERSION="bookworm-backports"
 FROM debian:${VERSION}
 
 
-ENV VERSION="bullseye"
+ENV VERSION="bookworm"
 ENV PACKAGES="binfmt-support build-essential lsof sudo util-linux fdisk"
 ENV BPO="qemu qemu-user-static"
 
