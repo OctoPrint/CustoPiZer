@@ -5,7 +5,7 @@ FROM debian:${VERSION}
 
 ENV VERSION="bookworm"
 ENV PACKAGES="binfmt-support build-essential lsof sudo util-linux fdisk"
-ENV BPO="qemu qemu-user-static"
+ENV BPO="qemu-system qemu-user-static"
 
 RUN set -ex \
     && apt-get update \
