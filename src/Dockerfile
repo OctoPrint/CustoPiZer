@@ -1,16 +1,15 @@
 # syntax=docker/dockerfile:1
-ARG VERSION="bullseye-backports"
+ARG VERSION="bookworm-backports"
 FROM debian:${VERSION}
+ARG VERSION
 
-
-ENV VERSION="bullseye"
 ENV PACKAGES="binfmt-support build-essential lsof sudo util-linux fdisk"
-ENV BPO="qemu qemu-user-static"
+ENV BPO="qemu-system qemu-user-static"
 
 RUN set -ex \
     && apt-get update \
     && apt-get install --no-install-recommends --yes ${PACKAGES} \
-    && apt-get install --no-install-recommends --yes -t ${VERSION}-backports ${BPO} \
+    && apt-get install --no-install-recommends --yes -t ${VERSION} ${BPO} \
     && apt autoremove \
     && rm -rf /var/lib/apt/lists/*
 
