@@ -12,10 +12,13 @@ fi
 [ -n "$EDITBASE_WORKSPACE" ] || EDITBASE_WORKSPACE=${DIST_PATH}/workspace
 [ -n "$EDITBASE_MOUNT_PATH" ] || EDITBASE_MOUNT_PATH=$EDITBASE_WORKSPACE/mount
 
+# Whether to mount the host's proc into the build chroot, 1 for yes, 0 for no
+[ -n "$EDITBASE_MOUNT_PROC" ] || EDITBASE_MOUNT_PROC=0
+
 # The root partiton of the image filesystem, 2 for raspbian
 [ -n "$EDITBASE_ROOT_PARTITION" ] || EDITBASE_ROOT_PARTITION=2
 
-# if set will enlarge root parition prior to build by provided size in MB
+# if set will enlarge root partition prior to build by provided size in MB
 [ -n "$EDITBASE_IMAGE_ENLARGEROOT" ] || EDITBASE_IMAGE_ENLARGEROOT=
 
 # if set will resize root partition on image after build to minimum size + 
