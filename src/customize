@@ -77,7 +77,10 @@ function execute_chroot_script() {
   cp "$DIR/common.sh" common.sh
   chmod 755 common.sh
   
-  mount -t proc /proc proc/
+  if [ "$EDITBASE_MOUNT_PROC" == "1" ]; then
+    echo "Mounting /proc of host..."
+    mount -t proc /proc proc/
+  fi
   
   if [ "$(arch)" != "armv7l" ] && [ "$(arch)" != "aarch64" ] && [ "$(arch)" != "arm64" ] ; then
     if [ "$EDITBASE_ARCH" == "armv7l" ]; then
