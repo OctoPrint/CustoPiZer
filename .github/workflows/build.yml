@@ -8,14 +8,51 @@ on:
       - "*"
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
 env:
   DOCKER_IMAGE: ghcr.io/octoprint/custopizer
+  TEST_TAG: testbuild
 
 jobs:
   build:
-    name: "Build"
+    name: "🏗 Build"
 
     runs-on: ubuntu-latest
+
+    steps:
+    - name: "⬇ Checkout"
+      uses: actions/checkout@v4
+
+    - name: "🐳 Set up Docker Buildx"
+      uses: docker/setup-buildx-action@v3
+
+    - name: "🏗 Build & push with test tag"
+      id: docker_build
+      uses: docker/build-push-action@v6
+      with:
+        context: ./src
+        platforms: linux/amd64,linux/arm64
+        tags: "${{ env.DOCKER_IMAGE }}:${{ env.TEST_TAG }}"
+
+  test:
+    name: "🧪 Test"
+    needs: build
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: Dummy test
+        run: |
+          echo "A test will run here"
+
+  deploy:
+    name: "📦 Deploy"
+    needs: test
+    runs-on: "ubuntu-latest"
+
+    if: github.event_name != 'pull_request'
 
     permissions:
       contents: read
@@ -24,37 +61,27 @@ jobs:
       id-token: write
 
     steps:
-    - name: "⬇ Checkout"
-      uses: actions/checkout@v4
+      - name: "🐳 Login to GHCR"
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+  
+      - name: 🔍️ Determine metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.DOCKER_IMAGE }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
 
-    - name: Docker meta
-      id: meta
-      uses: docker/metadata-action@v5
-      with:
-        images: ${{ env.DOCKER_IMAGE }}
-        tags: |
-          type=ref,event=branch
-          type=ref,event=pr
-          type=semver,pattern={{version}}
-          type=semver,pattern={{major}}.{{minor}}
+      - name: 🔖 Push correct tags
+        run: |
+          TAGS=$(echo "${{ steps.meta.outputs.json }}" | jq -r 'to_entries | map("-e " + .key + "=" + (.value | tostring)) | join(" ")'))
 
-    - name: "🐳 Set up Docker Buildx"
-      uses: docker/setup-buildx-action@v3
-
-    - name: "🐳 Login to GHCR"
-      uses: docker/login-action@v3
-      if: github.event_name != 'pull_request'
-      with:
-        registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: "🏗 Build"
-      id: docker_build
-      uses: docker/build-push-action@v6
-      with:
-        context: ./src
-        platforms: linux/amd64,linux/arm64
-        push: ${{ github.event_name != 'pull_request' }}
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
+          echo "Would run: docker buildx imagetools create $TAGS $DOCKER_IMAGE:$TEST_TAG"
+            
