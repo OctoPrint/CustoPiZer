@@ -90,7 +90,7 @@ jobs:
           aria2c -d . --seed-time=0 "$DOWNLOAD_URL"
 
           # verify checksum
-          curl -Ls $HASH_URL | sha256sum -b
+          curl -Ls $HASH_URL | sha256sum -c
 
           # search for the image file
           IMG_FILE=$(ls *.img.xz | head -n 1)
