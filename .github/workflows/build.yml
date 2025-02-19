@@ -12,8 +12,7 @@ concurrency:
   group: ${{ github.workflow }}
 
 env:
-  REGISTRY_NAME: ghcr.io
-  IMAGE_NAME: octoprint/custopizer
+  IMAGE_NAME: ghcr.io/octoprint/custopizer
 
 jobs:
   build:
@@ -46,12 +45,12 @@ jobs:
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: ${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}
+        images: ${{ env.IMAGE_NAME }}
   
     - name: "🐳 Set up Docker Buildx"
       uses: docker/setup-buildx-action@v3
 
-    - name: "🏗 Build & export"
+    - name: "🏗 Build & push by digest"
       id: docker_build
       uses: docker/build-push-action@v6
       with:
@@ -66,7 +65,7 @@ jobs:
         cache-to: type=inline
 
         # export
-        outputs: type=image,"name=${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}",push-by-digest=true,name-canonical=true,push=true
+        outputs: type=image,"name=${{ env.IMAGE_NAME }}",push-by-digest=true,name-canonical=true,push=true
 
 
   test:
@@ -77,7 +76,7 @@ jobs:
     steps:
       - name: "🐳 Load image into Docker"
         run: |
-          IMAGE="${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}@${{ needs.build.outputs.digest }}"
+          IMAGE="${{ env.IMAGE_NAME }}@${{ needs.build.outputs.digest }}"
           docker pull "$IMAGE"
           docker image ls -a
 
@@ -112,11 +111,11 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY_NAME }}
+          images: ${{ env.IMAGE_NAME }}
 
       - name: "📦️ Tag image in registry"
         run: |
-          IMAGE="${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}@${{ needs.build.outputs.digest }}"
+          IMAGE="${{ env.IMAGE_NAME }}@${{ needs.build.outputs.digest }}"
           TAGS=$(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON")
 
           docker buildx imagetools create $TAGS $IMAGE
