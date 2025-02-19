@@ -62,7 +62,7 @@ jobs:
         labels: ${{ steps.meta.outputs.labels }}
 
         # inline cache
-        cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags[0] }}
+        cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:${{ env.DOCKER_METADATA_OUTPUT_VERSION }}
         cache-to: type=inline
 
         # export
@@ -77,7 +77,7 @@ jobs:
     steps:
       - name: "🐳 Load image into Docker"
         run:
-          IMAGE="${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}@sha256:${{ needs.build.outputs.digest }}"
+          IMAGE="${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}@${{ needs.build.outputs.digest }}"
           docker pull "$IMAGE"
           docker image ls -a
 
@@ -116,7 +116,7 @@ jobs:
 
       - name: "📦️ Tag image in registry"
         run: |
-          IMAGE="${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}@sha256:${{ needs.build.outputs.digest }}"
+          IMAGE="${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}@${{ needs.build.outputs.digest }}"
           TAGS=$(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON")
 
           docker buildx imagetools create $TAGS $IMAGE
