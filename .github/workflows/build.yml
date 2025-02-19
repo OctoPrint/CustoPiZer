@@ -76,7 +76,7 @@ jobs:
 
     steps:
       - name: "🐳 Load image into Docker"
-        run:
+        run: |
           IMAGE="${{ env.REGISTRY_NAME }}/${{ env.IMAGE_NAME }}@${{ needs.build.outputs.digest }}"
           docker pull "$IMAGE"
           docker image ls -a
