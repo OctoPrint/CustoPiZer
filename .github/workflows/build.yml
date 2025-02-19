@@ -74,8 +74,8 @@ jobs:
     runs-on: "ubuntu-latest"
 
     env:
-      DOWNLOAD_URL: "https://downloads.raspberrypi.org/raspios_lite_arm64_latest.torrent"
-      HASH_URL: "https://downloads.raspberrypi.org/raspios_lite_arm64_latest.sha256"
+      DOWNLOAD_URL: "https://downloads.raspberrypi.org/raspios_lite_armhf_latest.torrent"
+      HASH_URL: "https://downloads.raspberrypi.org/raspios_lite_armhf_latest.sha256"
 
     steps:
       - name: "⬇ Checkout"
