@@ -73,16 +73,55 @@ jobs:
     needs: build
     runs-on: "ubuntu-latest"
 
-    steps:
-      - name: "🐳 Load image into Docker"
-        run: |
-          IMAGE="${{ env.IMAGE_NAME }}@${{ needs.build.outputs.digest }}"
-          docker pull "$IMAGE"
-          docker image ls -a
+    env:
+      DOWNLOAD_URL: "https://downloads.raspberrypi.org/raspios_lite_arm64_latest.torrent"
+      HASH_URL: "https://downloads.raspberrypi.org/raspios_lite_arm64_latest.sha256"
 
-      - name: Dummy test
+    steps:
+      - name: "⬇ Checkout"
+        uses: actions/checkout@v4
+
+      - name: "🛠 Prepare workspace with a fresh RPi lite image"
+        shell: bash
         run: |
-          echo "A test will run here"
+          mkdir -p workspace
+          cd workspace
+
+          aria2c -d . --seed-time=0 "$DOWNLOAD_URL"
+
+          # verify checksum
+          curl -Ls $HASH_URL | sha256sum -b
+
+          # search for the image file
+          IMG_FILE=$(ls *.img.xz | head -n 1)
+          echo "Found compressed Image file: ${IMG_FILE}"
+
+          # extract the image file
+          xz -d "${IMG_FILE}"
+
+          DECOMPRESSED_FILE="${IMG_FILE%.xz}"
+          echo "Image file: ${DECOMPRESSED_FILE}"
+
+          # rename the image file
+          mv "${DECOMPRESSED_FILE}" input.img
+
+      - name: "🛠 Prepare test scripts"
+        shell: bash
+        run: |
+          mkdir -p scripts
+
+          cp .github/tests/00-hello-world scripts/
+
+      - name: 🧪 Perform test build
+        shell: bash
+        run: |
+          sudo modprobe loop
+
+          IMAGE="${{ env.IMAGE_NAME }}@${{ needs.build.outputs.digest }}"
+          COMMAND="--rm --privileged -v ${{ github.workspace }}/workspace:/CustoPiZer/workspace -v ${{ github.workspace }}/scripts:/CustoPiZer/workspace/scripts $IMAGE"
+
+          echo "About to execute 'docker run $COMMAND'..."
+          docker run $COMMAND
 
   deploy:
     name: "📦 Deploy"
