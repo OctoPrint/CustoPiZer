@@ -122,8 +122,18 @@ jobs:
         run: |
           sudo modprobe loop
 
+          case "${{ matrix.arch }}" in
+            arm64)
+              EDITBASE_ARCH="arm64"
+              ;;
+            
+            *)
+              EDITBASE_ARCH="armv7l"
+              ;;
+          esac
+
           IMAGE="${{ env.IMAGE_NAME }}@${{ needs.build.outputs.digest }}"
-          COMMAND="--rm --privileged -v ${{ github.workspace }}/workspace:/CustoPiZer/workspace -v ${{ github.workspace }}/scripts:/CustoPiZer/workspace/scripts $IMAGE"
+          COMMAND="--rm --privileged -e EDITBASE_ARCH=$EDITBASE_ARCH -v ${{ github.workspace }}/workspace:/CustoPiZer/workspace -v ${{ github.workspace }}/scripts:/CustoPiZer/workspace/scripts $IMAGE"
 
           echo "About to execute 'docker run $COMMAND'..."
           docker run $COMMAND
