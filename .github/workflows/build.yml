@@ -71,11 +71,13 @@ jobs:
   test:
     name: "🧪 Test"
     needs: build
-    runs-on: "ubuntu-latest"
 
-    env:
-      DOWNLOAD_URL: "https://downloads.raspberrypi.org/raspios_lite_armhf_latest.torrent"
-      HASH_URL: "https://downloads.raspberrypi.org/raspios_lite_armhf_latest.sha256"
+    strategy:
+      matrix:
+        os: [ "ubuntu-latest", "ubuntu-latest-arm" ]
+        arch: [ "armhf", "arm64" ]
+
+    runs-on: "${{ matrix.os }}"
 
     steps:
       - name: "⬇ Checkout"
@@ -84,6 +86,9 @@ jobs:
       - name: "🛠 Prepare workspace with a fresh RPi lite image"
         shell: bash
         run: |
+          DOWNLOAD_URL="https://downloads.raspberrypi.org/raspios_lite_${{ matrix.arch }}_latest.torrent"
+          HASH_URL="https://downloads.raspberrypi.org/raspios_lite_${{ matrix.arch }}_latest.sha256"
+
           mkdir -p workspace
           cd workspace
 
