@@ -36,6 +36,7 @@ jobs:
         context: ./src
         platforms: linux/amd64,linux/arm64
         tags: "${{ env.DOCKER_IMAGE }}:${{ env.TEST_TAG }}"
+        push: true  # we always push here, even on PRs, as we only push with the test_tag
 
   test:
     name: "🧪 Test"
@@ -81,7 +82,7 @@ jobs:
 
       - name: 🔖 Push correct tags
         run: |
-          TAGS=$(echo "${{ steps.meta.outputs.json }}" | jq -r 'to_entries | map("-e " + .key + "=" + (.value | tostring)) | join(" ")'))
+          TAGS=$(echo "$DOCKER_METADATA" | jq -r '.tags | to_entries | map("--tag " + (.value | tostring)) | join(" ")')
 
           echo "Would run: docker buildx imagetools create $TAGS $DOCKER_IMAGE:$TEST_TAG"
             
