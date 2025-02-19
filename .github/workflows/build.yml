@@ -73,8 +73,9 @@ jobs:
     needs: build
 
     strategy:
+      fail-fast: false
       matrix:
-        os: [ "ubuntu-latest", "ubuntu-latest-arm" ]
+        os: [ "ubuntu-latest", "ubuntu-22.04-arm" ]
         arch: [ "armhf", "arm64" ]
 
     runs-on: "${{ matrix.os }}"
