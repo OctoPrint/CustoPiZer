@@ -12,8 +12,6 @@ concurrency:
   group: ${{ github.workflow }}
 
 env:
-  IMAGE_NAME: custopizer
-  ARTIFACT_NAME: custopizer-docker-image
   REGISTRY_NAME: ghcr.io/octoprint/custopizer
 
 jobs:
@@ -24,7 +22,14 @@ jobs:
 
     outputs:
       tag: ${{ steps.meta.outputs.tags[0] }}
+      digest: ${{ steps.docker_build.outputs.digest }}
 
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+  
     steps:
     - name: "⬇ Checkout"
       uses: actions/checkout@v4
@@ -41,11 +46,6 @@ jobs:
       uses: docker/metadata-action@v5
       with:
         images: ${{ env.REGISTRY_NAME }}
-        tags: |
-          type=ref,event=branch
-          type=ref,event=pr
-          type=semver,pattern={{version}}
-          type=semver,pattern={{major}}.{{minor}}
   
     - name: "🐳 Set up Docker Buildx"
       uses: docker/setup-buildx-action@v3
@@ -58,7 +58,6 @@ jobs:
         platforms: linux/amd64,linux/arm64
 
         # metadata
-        tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
 
         # inline cache
@@ -66,13 +65,7 @@ jobs:
         cache-to: type=inline
 
         # export
-        outputs: type=docker,dest=${{ runner.temp }}/${{ env.IMAGE_NAME }}.tar
-
-    - name: "⬆️ Upload artifact"
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ env.ARTIFACT_NAME }}
-        path: ${{ runner.temp }}/${{ env.IMAGE_NAME }}.tar
+        outputs: type=image,"name=${{ env.REGISTRY_NAME }}",push-by-digest=true,name-canonical=true,push=true
 
 
   test:
@@ -81,15 +74,10 @@ jobs:
     runs-on: "ubuntu-latest"
 
     steps:
-      - name: "⬇️ Download artifact"
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.ARTIFACT_NAME }}
-          path: ${{ runner.temp }}
-      
       - name: "🐳 Load image into Docker"
         run:
-          docker load --input ${{ runner.temp }}/${{ env.IMAGE_NAME }}.tar
+          IMAGE="$REGISTRY_IMAGE@sha256:${{ needs.build.outputs.digest }}"
+          docker pull "$IMAGE"
           docker image ls -a
 
       - name: Dummy test
@@ -119,18 +107,15 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
   
-      - name: "⬇️ Download artifact"
-        uses: actions/upload-artifact@v4
+      - name: 🔍️ Determine metadata
+        id: meta
+        uses: docker/metadata-action@v5
         with:
-          name: ${{ env.ARTIFACT_NAME }}
-          path: ${{ runner.temp }}
-      
-      - name: "🐳 Load image into Docker"
-        run: |
-          docker load --input ${{ runner.temp }}/${{ env.IMAGE_NAME }}.tar
-          docker image ls -a
+          images: ${{ env.REGISTRY_NAME }}
 
-      - name: "📦️ Push image into registry"
+      - name: "📦️ Tag image in registry"
         run: |
-          IMAGE_TAG="${{ needs.build.outputs.tag }}"
-          docker push $IMAGE_TAG
+          IMAGE="$REGISTRY_IMAGE@sha256:${{ needs.build.outputs.digest }}"
+          TAGS=$(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON")
+
+          docker buildx imagetools create $TAGS $IMAGE
