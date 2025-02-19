@@ -95,7 +95,7 @@ jobs:
 
       - name: 🔖 Push correct tags
         run: |
-          TAGS=$(echo "$DOCKER_METADATA" | jq -r '.tags | to_entries | map("--tag " + (.value | tostring)) | join(" ")')
+          TAGS=$(echo "$DOCKER_METADATA_OUTPUT_JSON" | jq -r '.tags | to_entries | map("--tag " + (.value | tostring)) | join(" ")')
 
           echo "Would run: docker buildx imagetools create $TAGS $DOCKER_IMAGE:$TEST_TAG"
             
