@@ -118,11 +118,8 @@ jobs:
 
           cp .github/tests/00-hello-world scripts/
 
-      - name: 🧪 Perform test build
-        shell: bash
+      - name: "🛠 Determine EDIT_BASE_ARCH"
         run: |
-          sudo modprobe loop
-
           case "${{ matrix.arch }}" in
             arm64)
               EDITBASE_ARCH="arm64"
@@ -133,11 +130,15 @@ jobs:
               ;;
           esac
 
-          IMAGE="${{ env.IMAGE_NAME }}@${{ needs.build.outputs.digest }}"
-          COMMAND="--rm --privileged -e EDITBASE_ARCH=$EDITBASE_ARCH -v ${{ github.workspace }}/workspace:/CustoPiZer/workspace -v ${{ github.workspace }}/scripts:/CustoPiZer/workspace/scripts $IMAGE"
+          echo "EDIT_BASE_ARCH=$EDIT_BASE_ARCH" >> $GITHUB_ENV
 
-          echo "About to execute 'docker run $COMMAND'..."
-          docker run $COMMAND
+      - name: 🧪 Perform test build using the action
+        uses: OctoPrint/CustoPiZer@main
+        with:
+          workspace: ${{ github.workspace }}/workspace
+          scripts: ${{ github.workspace }}/scripts
+          environment: '{ "EDIT_BASE_ARCH": "${{ matrix.arch }}" }'
+          custopizer: '@${{ needs.build.outputs.digest }}'
 
   deploy:
     name: "📦 Deploy"
