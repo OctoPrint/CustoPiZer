@@ -137,7 +137,7 @@ jobs:
         with:
           workspace: ${{ github.workspace }}/workspace
           scripts: ${{ github.workspace }}/scripts
-          environment: '{ "EDIT_BASE_ARCH": "${{ matrix.arch }}" }'
+          environment: '{ "EDIT_BASE_ARCH": "${{ env.EDIT_BASE_ARCH }}" }'
           custopizer: '${{ needs.build.outputs.digest }}'
 
   deploy:
