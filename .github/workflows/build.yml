@@ -118,7 +118,7 @@ jobs:
 
           cp .github/tests/00-hello-world scripts/
 
-      - name: "🛠 Determine EDIT_BASE_ARCH"
+      - name: "🛠 Determine EDITBASE_ARCH"
         run: |
           case "${{ matrix.arch }}" in
             arm64)
@@ -130,14 +130,14 @@ jobs:
               ;;
           esac
 
-          echo "EDIT_BASE_ARCH=$EDIT_BASE_ARCH" >> $GITHUB_ENV
+          echo "EDITBASE_ARCH=$EDITBASE_ARCH" >> $GITHUB_ENV
 
       - name: 🧪 Perform test build using the action
         uses: OctoPrint/CustoPiZer@main
         with:
           workspace: ${{ github.workspace }}/workspace
           scripts: ${{ github.workspace }}/scripts
-          environment: '{ "EDIT_BASE_ARCH": "${{ env.EDIT_BASE_ARCH }}" }'
+          environment: '{ "EDITBASE_ARCH": "${{ env.EDITBASE_ARCH }}" }'
           custopizer: '${{ needs.build.outputs.digest }}'
 
   deploy:
