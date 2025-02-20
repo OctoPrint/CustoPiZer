@@ -84,14 +84,14 @@ function execute_chroot_script() {
   
   if [ "$(arch)" != "armv7l" ] && [ "$(arch)" != "aarch64" ] && [ "$(arch)" != "arm64" ] ; then
     if [ "$EDITBASE_ARCH" == "armv7l" ]; then
-      echo "Building on non-ARM device a armv7l system, using qemu-arm-static"
+      echo "Building an armv7l system on a non-ARM host, using qemu-arm-static"
       chroot . usr/bin/qemu-arm-static /bin/bash /chroot_script
     elif [ "$EDITBASE_ARCH" == "aarch64" ] || [ "$EDITBASE_ARCH" == "arm64" ]; then
-      echo "Building on non-ARM device a aarch64/arm64 system, using qemu-aarch64-static"
+      echo "Building an aarch64/arm64 system on a non-ARM host, using qemu-aarch64-static"
       chroot . usr/bin/qemu-aarch64-static /bin/bash /chroot_script
     fi
   else
-    echo "Building on ARM device a armv7l/aarch64/arm64 system, not using qemu"
+    echo "Building an armv7l/aarch64/arm64 system on an ARM host, not using qemu"
     chroot . /bin/bash /chroot_script
   fi
 
