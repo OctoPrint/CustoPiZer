@@ -30,7 +30,7 @@ runs:
         [ -d "${{ inputs.workspace }}" ] || (echo "Validation error: inputs.workspace does not exist or is not a directory!" && exit -1)
         [ -d "${{ inputs.scripts }}" ] || (echo "Validation error: inputs.scripts does not exist or is not a directory!" && exit -1)
         [ -z "${{ inputs.config }}" ] || [ -f "${{ inputs.config }}" ] || (echo "Validation error: inputs.config does not exist or is not a file!" && exit -1)
-        [ -z "${{ inputs.environment }}" ] || $(echo '${{ inputs.environment }}' | jq) || (echo "Validation error: inputs.environment does not contain valid json!" && exit -1)
+        [ -z "${{ inputs.environment }}" ] || (echo '${{ inputs.environment }}' | jq) || (echo "Validation error: inputs.environment does not contain valid json!" && exit -1)
         [ -z "${{ inputs.custopizer }}" ] || [[ "${{ inputs.custopizer }}" ~= ^[a-zA-Z0-9_][a-zA-Z0-9_.-]{0,127}$ || "${{ inputs.custopizer }}" =~ sha256:[a-f0-9]{64}$ ]] || (echo "Validation error: inputs.custopizer does not contain a valid version!" && exit -1)
       shell: bash
 
