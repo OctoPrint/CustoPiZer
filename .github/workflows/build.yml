@@ -103,7 +103,7 @@ jobs:
           echo "Found compressed Image file: ${IMG_FILE}"
 
           # extract the image file
-          xz -d "${IMG_FILE}"
+          xz --verbose -d "${IMG_FILE}"
 
           DECOMPRESSED_FILE="${IMG_FILE%.xz}"
           echo "Image file: ${DECOMPRESSED_FILE}"
