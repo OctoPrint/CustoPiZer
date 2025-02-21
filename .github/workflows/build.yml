@@ -93,7 +93,7 @@ jobs:
           mkdir -p workspace
           cd workspace
 
-          aria2c -d . --seed-time=0 "$DOWNLOAD_URL"
+          aria2c -d . --seed-time=0 --enable-dht=false "$DOWNLOAD_URL"
 
           # verify checksum
           curl -Ls $HASH_URL | sha256sum -c
@@ -143,8 +143,8 @@ jobs:
   deploy:
     name: "📦 Deploy"
     needs: 
-    - build
-    - test
+      - build
+      - test
     runs-on: "ubuntu-latest"
 
     if: github.event_name != 'pull_request'
