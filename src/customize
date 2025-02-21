@@ -59,7 +59,7 @@ function execute_chroot_script() {
     elif [ "$EDITBASE_ARCH" == "aarch64" ] || [ "$EDITBASE_ARCH" == "arm64" ]; then
       update-binfmts --enable qemu-aarch64
     fi
-    mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc || true
+    (mount | grep -q -v "type binfmt_misc") || mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
   fi
 
   # black magic of qemu-arm-static
