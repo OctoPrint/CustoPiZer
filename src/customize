@@ -41,17 +41,7 @@ if [ ! -d "$CUSTOMIZE_SCRIPT_PATH" ]; then
   exit 1
 fi
 
-function copy_files() {
-  #move filesystem files
-  if [ -d "$1" ]; then
-    echo "::group::Copying $1"
-    cp -vr --preserve=mode,timestamps "$1" .
-    echo "::endgroup::"
-  fi
-}
-
-function execute_chroot_script() {
-
+function prepare_environment() {
   # In docker, these extra commands are required to enable this black-magic
   if [ -f /.dockerenv ] && [ "$(arch)" != "armv7l" ] && [ "$(arch)" != "aarch64" ] ; then
     if [ "$EDITBASE_ARCH" == "armv7l" ]; then
@@ -70,18 +60,30 @@ function execute_chroot_script() {
       cp `which qemu-aarch64-static` usr/bin/qemu-aarch64-static
     fi
   fi
-  
-  echo "::group::Running $1 in chroot..."
+
+  if [ "$EDITBASE_MOUNT_PROC" == "1" ]; then
+    echo "Mounting /proc of host..."
+    mount -t proc /proc proc/
+  fi
+}
+
+function copy_files() {
+  #move filesystem files
+  if [ -d "$1" ]; then
+    echo "::group::Copying $1"
+    cp -vr --preserve=mode,timestamps "$1" .
+    echo "::endgroup::"
+  fi
+}
+
+function execute_chroot_script() {
   cp $1 chroot_script
   chmod 755 chroot_script
   cp "$DIR/common.sh" common.sh
   chmod 755 common.sh
   
-  if [ "$EDITBASE_MOUNT_PROC" == "1" ]; then
-    echo "Mounting /proc of host..."
-    mount -t proc /proc proc/
-  fi
-  
+  echo "::group::Running $1 in chroot..."
+
   if [ "$(arch)" != "armv7l" ] && [ "$(arch)" != "aarch64" ] && [ "$(arch)" != "arm64" ] ; then
     if [ "$EDITBASE_ARCH" == "armv7l" ]; then
       echo "Building an armv7l system on a non-ARM host, using qemu-arm-static"
@@ -96,7 +98,7 @@ function execute_chroot_script() {
   fi
 
   echo "::endgroup::"
-  
+
   #cleanup
   rm chroot_script
 }
@@ -141,6 +143,8 @@ pushd $EDITBASE_WORKSPACE
     if [ "$EDITBASE_DISTRO" == "raspbian" ]; then
       fixLd
     fi
+
+    prepare_environment
     
     ### Execute chroot scripts ###
     
