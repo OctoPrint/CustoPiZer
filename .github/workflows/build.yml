@@ -154,7 +154,7 @@ jobs:
     if: github.event_name != 'pull_request'
 
     permissions:
-      contents: read
+      contents: write
       packages: write
       attestations: write
       id-token: write
