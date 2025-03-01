@@ -3,30 +3,187 @@ name: "Build container image"
 on:
   push:
     branches:
-    - main
+      - main
+    tags:
+      - "*"
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+
+env:
+  IMAGE_NAME: ghcr.io/octoprint/custopizer
 
 jobs:
   build:
-    name: "Build"
+    name: "🏗 Build"
+
     runs-on: ubuntu-latest
+
+    outputs:
+      digest: ${{ steps.docker_build.outputs.digest }}
+
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+  
     steps:
     - name: "⬇ Checkout"
       uses: actions/checkout@v4
-    - name: "🐳 Set up Docker Buildx"
-      uses: docker/setup-buildx-action@v3
+
     - name: "🐳 Login to GHCR"
       uses: docker/login-action@v3
       with:
         registry: ghcr.io
-        username: foosel
-        password: ${{ secrets.PAT }}
-    - name: "🏗 Build"
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: 🔍️ Determine metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+
+    - name: "🐳 Set up Docker Buildx"
+      uses: docker/setup-buildx-action@v3
+
+    - name: "🏗 Build & push by digest"
       id: docker_build
       uses: docker/build-push-action@v6
       with:
         context: ./src
         platforms: linux/amd64,linux/arm64
-        push: true
-        tags: |
-          ghcr.io/octoprint/custopizer:latest
+
+        # metadata
+        labels: ${{ steps.meta.outputs.labels }}
+
+        # inline cache
+        cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:${{ env.DOCKER_METADATA_OUTPUT_VERSION }}
+        cache-to: type=inline
+
+        # export
+        outputs: type=image,"name=${{ env.IMAGE_NAME }}",push-by-digest=true,name-canonical=true,push=true
+
+
+  test:
+    name: "🧪 Test"
+    needs: build
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ "ubuntu-latest", "ubuntu-22.04-arm" ]
+        arch: [ "armhf", "arm64" ]
+
+    runs-on: "${{ matrix.os }}"
+
+    steps:
+      - name: "⬇ Checkout"
+        uses: actions/checkout@v4
+
+      - name: "🛠 Prepare workspace with a fresh RPi lite image"
+        shell: bash
+        run: |
+          DOWNLOAD_URL="https://downloads.raspberrypi.org/raspios_lite_${{ matrix.arch }}_latest.torrent"
+          HASH_URL="https://downloads.raspberrypi.org/raspios_lite_${{ matrix.arch }}_latest.sha256"
+
+          mkdir -p workspace
+          cd workspace
+
+          aria2c -d . --seed-time=0 --enable-dht=false "$DOWNLOAD_URL"
+
+          # verify checksum
+          curl -Ls $HASH_URL | sha256sum -c
+
+          # search for the image file
+          IMG_FILE=$(ls *.img.xz | head -n 1)
+          echo "Found compressed Image file: ${IMG_FILE}"
+
+          # extract the image file
+          xz --verbose -d "${IMG_FILE}"
+
+          DECOMPRESSED_FILE="${IMG_FILE%.xz}"
+          echo "Image file: ${DECOMPRESSED_FILE}"
+
+          # rename the image file
+          mv "${DECOMPRESSED_FILE}" input.img
+
+      - name: "🛠 Prepare test scripts"
+        shell: bash
+        run: |
+          mkdir -p scripts
+
+          cp .github/tests/00-hello-world scripts/
+
+      - name: "🛠 Determine EDITBASE_ARCH"
+        run: |
+          case "${{ matrix.arch }}" in
+            arm64)
+              EDITBASE_ARCH="arm64"
+              ;;
+            
+            *)
+              EDITBASE_ARCH="armv7l"
+              ;;
+          esac
+
+          echo "EDITBASE_ARCH=$EDITBASE_ARCH" >> $GITHUB_ENV
+
+      - name: 🧪 Perform test build using the action
+        uses: OctoPrint/CustoPiZer@main
+        with:
+          workspace: ${{ github.workspace }}/workspace
+          scripts: ${{ github.workspace }}/scripts
+          environment: '{ "EDITBASE_ARCH": "${{ env.EDITBASE_ARCH }}" }'
+          custopizer: '${{ needs.build.outputs.digest }}'
+
+  deploy:
+    name: "📦 Deploy"
+    needs: 
+      - build
+      - test
+    runs-on: "ubuntu-latest"
+
+    if: github.event_name != 'pull_request'
+
+    permissions:
+      contents: write
+      packages: write
+      attestations: write
+      id-token: write
+
+    steps:
+      - name: "🐳 Login to GHCR"
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+  
+      - name: 🔍️ Determine metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+
+      - name: "📦️ Tag image in registry"
+        run: |
+          IMAGE="${{ env.IMAGE_NAME }}@${{ needs.build.outputs.digest }}"
+          TAGS=$(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON")
+
+          docker buildx imagetools create $TAGS $IMAGE
+
+      - name: 🔖 Add additional git tags
+        uses: OctoPrint/actions/add-additional-tags@main

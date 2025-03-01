@@ -136,6 +136,17 @@ you can do that via the `config` parameter:
     config: "${{ github.workspace }}/config.local"
 ```
 
+And finally, you may also provide the tag or digest to use for CustoPiZer itself - helpful if you want to run dev versions, e.g. those built from the `main` branch:
+
+``` yaml
+- name: Run CustoPiZer
+  uses: OctoPrint/CustoPiZer@main
+  with:
+    workspace: "${{ github.workspace }}/build"
+    scripts:  "${{ github.workspace }}/scripts"
+    custopizer: "main"
+```
+
 For a complex example usage that also includes repository dispatch, creating releases and attaching assets, take a look at the scripts and workflow of [OctoPrint/OctoPi-UpToDate](https://github.com/OctoPrint/OctoPi-UpToDate).
 
 ## Writing customization scripts
