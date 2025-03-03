@@ -16,7 +16,7 @@ install_cleanup_trap
 if [[ "${EDITBASE_DISTRO}" == "armbian" || "${EDITBASE_DISTRO}" == "ubuntu" ]]; then
   # workaround for Armbian > 24.5, because it uses a symlink for /etc/resolv.conf
   if [ -h /etc/resolv.conf ]; then
-    link_target="$(readlink /etc/resolv.conf.orig)"
+    link_target="$(readlink /etc/resolv.conf)"
     echo "${link_target}" > /etc/resolv.conf.link
     rm -f /etc/resolv.conf
   else
