@@ -8,7 +8,7 @@ ENV PACKAGES="qemu-system qemu-user-static binfmt-support build-essential lsof s
 RUN set -ex \
     && apt-get update \
     && apt-get install --no-install-recommends --yes ${PACKAGES} \
-    && apt autoremove \
+    && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
 
 COPY . /CustoPiZer
