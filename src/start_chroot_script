@@ -14,7 +14,16 @@ source /common.sh
 install_cleanup_trap
 
 if [[ "${EDITBASE_DISTRO}" == "armbian" || "${EDITBASE_DISTRO}" == "ubuntu" ]]; then
-  mv /etc/resolv.conf /etc/resolv.conf.orig || true
+  # workaround for Armbian > 24.5, because it uses a symlink for /etc/resolv.conf
+  if [ -h /etc/resolv.conf ]; then
+    link_target="$(readlink /etc/resolv.conf)"
+    echo "${link_target}" > /etc/resolv.conf.link
+    rm -f /etc/resolv.conf
+  else
+    mv /etc/resolv.conf /etc/resolv.conf.orig || true
+  fi
+
+  # Set up resolv.conf with Google & Cloudflare public DNS servers
   echo "nameserver 8.8.8.8" > /etc/resolv.conf
   echo "nameserver 8.8.4.4" >> /etc/resolv.conf
   echo "nameserver 1.1.1.1" >> /etc/resolv.conf

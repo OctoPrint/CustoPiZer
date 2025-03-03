@@ -22,6 +22,17 @@ then
   rm -r /home/"${BASE_USER}"/.pydistutils.cfg
 fi
 
+if [ -f /etc/resolv.conf.link ]; then
+  echo "Restoring original symlink for resolv.conf"
+  resolvconf_target=$(cat /etc/resolv.conf.link)
+  ln -sf "${resolvconf_target}" /etc/resolv.conf
+  rm /etc/resolv.conf.link
+elif [ -e /etc/resolv.conf.orig ]; then
+  echo "Restoring original resolv.conf"
+  [ -f /etc/resolv.conf ] && rm /etc/resolv.conf
+  mv /etc/resolv.conf.orig /etc/resolv.conf || true
+fi
+
 # Remove common.sh after build (https://github.com/OctoPrint/CustoPiZer/issues/13)
 if [ -f "/common.sh" ]; then
     rm -f /common.sh
