@@ -146,6 +146,10 @@ function unmount_image() {
     force=$2
   fi
 
+  echo "Syncing $mount_path..."
+  sync
+  sleep 1
+
   if [ -n "$force" ]
   then
     for process in $(sudo lsof $mount_path | awk '{print $2}')
