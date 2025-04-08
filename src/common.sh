@@ -130,8 +130,15 @@ function mount_image() {
   sudo losetup -f
   sudo mount -o loop,offset=$root_offset $image_path $mount_path/
   if [[ "$boot_partition" != "$root_partition" ]]; then
-	  sudo losetup -f
-	  sudo mount -o loop,offset=$boot_offset,sizelimit=$( expr $root_offset - $boot_offset ) $image_path $mount_path/boot
+    if grep -q /boot/firmware $mount_path/etc/fstab; then
+      boot_path=/boot/firmware
+    else
+      boot_path=/boot
+    fi
+    echo "Mount point for boot partition is $boot_path"
+
+    sudo losetup -f
+    sudo mount -o loop,offset=$boot_offset,sizelimit=$( expr $root_offset - $boot_offset ) $image_path $mount_path$boot_path
   fi
   sudo mkdir -p $mount_path/dev/pts
   sudo mount -o bind /dev $mount_path/dev

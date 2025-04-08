@@ -130,6 +130,13 @@ pushd $EDITBASE_WORKSPACE
 
   # mount root and boot partition
   mount_image $EDITBASE_IMG_PATH $EDITBASE_ROOT_PARTITION $EDITBASE_MOUNT_PATH
+  if grep -q /boot/firmware $EDITBASE_MOUNT_PATH/etc/fstab; then
+    export BOOT_PATH=/boot/firmware
+  else
+    export BOOT_PATH=/boot
+  fi
+
+  # mount apt cache (if configured)
   if [ -n "$EDITBASE_APT_CACHE" ] && [ "$EDITBASE_APT_CACHE" != "no" ]
   then
     mkdir -p "$EDITBASE_APT_CACHE"
