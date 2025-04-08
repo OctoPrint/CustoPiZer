@@ -12,6 +12,9 @@ export LC_ALL=C
 source /common.sh
 install_cleanup_trap
 
+# add build hostname
+sed -i "/^127\.0\.0\.1\s/ s/$/ ${HOSTNAME}/" /etc/hosts
+
 if [[ "${EDITBASE_DISTRO}" == "armbian" || "${EDITBASE_DISTRO}" == "ubuntu" ]]; then
   # workaround for Armbian > 24.5, because it uses a symlink for /etc/resolv.conf
   if [ -h /etc/resolv.conf ]; then

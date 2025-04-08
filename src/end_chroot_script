@@ -32,6 +32,9 @@ elif [ -e /etc/resolv.conf.orig ]; then
   mv /etc/resolv.conf.orig /etc/resolv.conf || true
 fi
 
+# remove build hostname
+sed -i -r "/^127\.0\.0\.1\s/ s/\s+${HOSTNAME}(\s+|$)//" /etc/hosts
+
 # Remove common.sh after build (https://github.com/OctoPrint/CustoPiZer/issues/13)
 if [ -f "/common.sh" ]; then
     rm -f /common.sh
