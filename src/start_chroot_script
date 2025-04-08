@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# EditBase script
-# Basic and mandatory settings for the base of an OctoPi customization run
+# Basic and mandatory settings for the base of an OS customization run
 # Written by Gina Haeussge <gina at octoprint dot org>, 
 # based on work by Guy Sheffer <guysoft at gmail dot com>
 # GPL V3

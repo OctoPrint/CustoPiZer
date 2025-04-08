@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# OctoPi customization script
-# This script takes an OctoPi image and runs customization scripts on it
+# OS customization script
+# This script takes an OS image and runs customization scripts on it
 # Written by Gina Haeussge <gina at octoprint dot org>, based on work by Guy Sheffer <guy at gmail dot com>
 # GPL V3
 #

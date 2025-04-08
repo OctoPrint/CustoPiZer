@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Pi OS image access script
-# This script mounts & spawns a chrooted & qemu'd bash inside a Pi OS image
+# OS image access script
+# This script mounts & spawns a chrooted & qemu'd bash inside an OS image
 # Written by Gina Haeussge <gina at octoprint dot org>, based on work by Guy Sheffer <guy at gmail dot com>
 # GPL V3
 #
