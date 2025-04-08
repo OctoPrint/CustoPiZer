@@ -20,6 +20,7 @@ echo "DIST_PATH=$DIST_PATH"
 
 source $DIR/config
 source $DIR/common.sh
+source $DIR/chroot.sh
 
 IMAGE=$1
 if [ "$IMAGE" == "" ]; then
@@ -41,32 +42,6 @@ if [ ! -d "$CUSTOMIZE_SCRIPT_PATH" ]; then
   exit 1
 fi
 
-function prepare_environment() {
-  # In docker, these extra commands are required to enable this black-magic
-  if [ -f /.dockerenv ] && [ "$(arch)" != "armv7l" ] && [ "$(arch)" != "aarch64" ] ; then
-    if [ "$EDITBASE_ARCH" == "armv7l" ]; then
-      update-binfmts --enable qemu-arm
-    elif [ "$EDITBASE_ARCH" == "aarch64" ] || [ "$EDITBASE_ARCH" == "arm64" ]; then
-      update-binfmts --enable qemu-aarch64
-    fi
-    (mount | grep -q -v "type binfmt_misc") || mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
-  fi
-
-  # black magic of qemu-arm-static
-  if [ "$(arch)" != "armv7l" ] && [ "$(arch)" != "aarch64" ] ; then
-    if [ "$EDITBASE_ARCH" == "armv7l" ]; then
-      cp `which qemu-arm-static` usr/bin/qemu-arm-static
-    elif [ "$EDITBASE_ARCH" == "aarch64" ] || [ "$EDITBASE_ARCH" == "arm64" ]; then
-      cp `which qemu-aarch64-static` usr/bin/qemu-aarch64-static
-    fi
-  fi
-
-  if [ "$EDITBASE_MOUNT_PROC" == "1" ]; then
-    echo "Mounting /proc of host..."
-    mount -t proc /proc proc/
-  fi
-}
-
 function copy_files() {
   #move filesystem files
   if [ -d "$1" ]; then
@@ -84,18 +59,7 @@ function execute_chroot_script() {
   
   echo "::group::Running $1 in chroot..."
 
-  if [ "$(arch)" != "armv7l" ] && [ "$(arch)" != "aarch64" ] && [ "$(arch)" != "arm64" ] ; then
-    if [ "$EDITBASE_ARCH" == "armv7l" ]; then
-      echo "Building an armv7l system on a non-ARM host, using qemu-arm-static"
-      chroot . usr/bin/qemu-arm-static /bin/bash /chroot_script
-    elif [ "$EDITBASE_ARCH" == "aarch64" ] || [ "$EDITBASE_ARCH" == "arm64" ]; then
-      echo "Building an aarch64/arm64 system on a non-ARM host, using qemu-aarch64-static"
-      chroot . usr/bin/qemu-aarch64-static /bin/bash /chroot_script
-    fi
-  else
-    echo "Building an armv7l/aarch64/arm64 system on an ARM host, not using qemu"
-    chroot . /bin/bash /chroot_script
-  fi
+  chroot . $QEMU /bin/bash /chroot_script
 
   echo "::endgroup::"
 
@@ -151,7 +115,7 @@ pushd $EDITBASE_WORKSPACE
       fixLd
     fi
 
-    prepare_environment
+    prepare_chroot_environment
     
     ### Execute chroot scripts ###
     
