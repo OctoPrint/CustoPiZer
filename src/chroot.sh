@@ -31,4 +31,10 @@ function prepare_chroot_environment() {
     echo "Mounting /proc of host..."
     mount -t proc /proc proc/
   fi
+
+  # mount /sys if configured to do so
+  if [ "$EDITBASE_MOUNT_SYS" == "1" ]; then
+    echo "Mounting /sys of host..."
+    mount -t sysfs /sys sys/
+  fi
 }
