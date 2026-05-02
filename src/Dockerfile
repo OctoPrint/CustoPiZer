@@ -3,7 +3,7 @@ ARG VERSION="trixie"
 FROM debian:${VERSION}
 ARG VERSION
 
-ENV PACKAGES="qemu-system qemu-user-static binfmt-support build-essential lsof sudo util-linux fdisk"
+ENV PACKAGES="qemu-system qemu-user binfmt-support build-essential lsof sudo util-linux fdisk"
 
 RUN set -ex \
     && apt-get update \
