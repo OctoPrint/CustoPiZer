@@ -15,11 +15,18 @@ function _binfmt_register_cf() {
   local arch="$1"
   local name="qemu-$arch"
   local entry="/proc/sys/fs/binfmt_misc/$name"
-  local spec="/usr/share/binfmts/$name"
 
+  # Find the qemu interpreter for $arch. Debian's packaging changed:
+  #   bookworm: /usr/bin/qemu-$arch-static
+  #   trixie:   /usr/bin/qemu-$arch
   local interp
-  interp="$(command -v "qemu-$arch-static")" \
-    || { echo "qemu-$arch-static not found in PATH"; return 1; }
+  if [ -e "/usr/bin/qemu-$arch" ]; then
+    interp="/usr/bin/qemu-$arch"
+  elif [ -e "/usr/bin/qemu-$arch-static" ]; then
+    interp="/usr/bin/qemu-$arch-static"
+  else
+    echo "no qemu-$arch interpreter found"; return 1
+  fi
 
   # Make sure binfmt_misc is mounted
   mount | grep -q "type binfmt_misc" || \
@@ -39,13 +46,28 @@ function _binfmt_register_cf() {
   # re-register with our flags.
   [ -f "$entry" ] && echo -1 > "$entry"
 
-  # Pull magic/mask from the qemu-user-static spec file shipped by Debian.
-  [ -f "$spec" ] || { echo "binfmt spec missing: $spec"; return 1; }
+  # Pull magic/mask from the qemu spec file shipped by Debian. The path and
+  # format changed between bookworm and trixie:
+  #   trixie:   /usr/share/qemu/binfmt.d/$name.conf  (single-line register fmt)
+  #   bookworm: /usr/share/binfmts/$name             (multi-line key/value fmt)
+  local spec_new="/usr/share/qemu/binfmt.d/$name.conf"
+  local spec_old="/usr/share/binfmts/$name"
+
   local magic mask
-  magic=$(awk '/^magic / {print $2}' "$spec")
-  mask=$(awk  '/^mask / {print $2}'  "$spec")
+  if [ -f "$spec_new" ]; then
+    # Format: :name:M::magic:mask:interpreter:flags
+    magic=$(awk -F: '{print $5}' "$spec_new")
+    mask=$(awk  -F: '{print $6}' "$spec_new")
+  elif [ -f "$spec_old" ]; then
+    magic=$(awk '/^magic / {print $2}' "$spec_old")
+    mask=$(awk  '/^mask / {print $2}'  "$spec_old")
+  else
+    echo "binfmt spec missing (tried: $spec_new, $spec_old)"
+    return 1
+  fi
+
   [ -n "$magic" ] && [ -n "$mask" ] \
-    || { echo "could not parse magic/mask from $spec"; return 1; }
+    || { echo "could not parse magic/mask from spec"; return 1; }
 
   # Register with CF flags. The kernel parses the \xNN escape sequences
   # in magic/mask itself; we just pass them through verbatim.
