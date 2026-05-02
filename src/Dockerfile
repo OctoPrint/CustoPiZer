@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-ARG VERSION="bookworm"
+ARG VERSION="trixie"
 FROM debian:${VERSION}
 ARG VERSION
 
