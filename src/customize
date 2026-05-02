@@ -59,7 +59,7 @@ function execute_chroot_script() {
   
   echo "::group::Running $1 in chroot..."
 
-  chroot . $QEMU /bin/bash /chroot_script
+  chroot . /bin/bash /chroot_script
 
   echo "::endgroup::"
 

@@ -51,7 +51,7 @@ pushd $EDITBASE_WORKSPACE
     
     ### Execute shell ###
     prepare_chroot_environment
-    chroot . $QEMU ${EDITBASE_SHELL:-/bin/bash}
+    chroot . ${EDITBASE_SHELL:-/bin/bash}
     
     if [ "$EDITBASE_DISTRO" == "raspbian" ]; then
       restoreLd
