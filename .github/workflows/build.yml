@@ -140,7 +140,12 @@ jobs:
         with:
           workspace: ${{ github.workspace }}/workspace
           scripts: ${{ github.workspace }}/scripts
-          environment: '{ "EDITBASE_ARCH": "${{ env.EDITBASE_ARCH }}" }'
+          environment: >-
+            {
+              "EDITBASE_ARCH": "${{ env.EDITBASE_ARCH }}",
+              "EDITBASE_IMAGE_ENLARGEROOT": "100",
+              "EDITBASE_IMAGE_RESIZEROOT": "200"
+            }
           custopizer: "${{ needs.build.outputs.digest }}"
 
   deploy:
