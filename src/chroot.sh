@@ -57,10 +57,16 @@ function _binfmt_register_cf() {
 function prepare_chroot_environment() {
   # When cross-building on a non-matching host, register qemu-user-static via
   # binfmt_misc so the kernel transparently runs foreign-arch binaries in chroot.
-  if [ "$EDITBASE_ARCH" == "armv7l" ] && [ "$(arch)" != "armv7l" ]; then
+  # Note: aarch64/arm64 hosts can execute armv7l binaries natively via the
+  # kernel's AArch32 compat mode, so no qemu is needed in that case.
+  local host_arch
+  host_arch="$(arch)"
+
+  if [ "$EDITBASE_ARCH" == "armv7l" ] \
+     && [[ "$host_arch" != "armv7l" && "$host_arch" != "aarch64" && "$host_arch" != "arm64" ]]; then
     _binfmt_register_cf arm
   elif [[ "$EDITBASE_ARCH" == "aarch64" || "$EDITBASE_ARCH" == "arm64" ]] \
-       && [[ "$(arch)" != "aarch64" && "$(arch)" != "arm64" ]]; then
+       && [[ "$host_arch" != "aarch64" && "$host_arch" != "arm64" ]]; then
     _binfmt_register_cf aarch64
   fi
 
