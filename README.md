@@ -1,8 +1,8 @@
 # CustoPiZer
 
-*A customization tool for Raspberry Pi OS images like OctoPi*
+_A customization tool for Raspberry Pi OS images like OctoPi_
 
-CustoPiZer is based on work done as part of the amazing [CustomPiOS](https://github.com/guysoft/CustomPiOS) and 
+CustoPiZer is based on work done as part of the amazing [CustomPiOS](https://github.com/guysoft/CustomPiOS) and
 [OctoPi](https://github.com/guysoft/OctoPi) build scripts maintained by [Guy Sheffer](https://github.com/guysoft).
 
 It allows to customize an OS image with a set of scripts that are run on the mounted image inside a qemu'd chroot. This is useful
@@ -29,7 +29,7 @@ If you are having problems getting the container to connect to the internet for 
 
 ### Why the `--privileged` flag?
 
-CustoPiZer uses loopback mounts to mount the image partitions. Those don't seem to work in an unprivileged container. Happy to 
+CustoPiZer uses loopback mounts to mount the image partitions. Those don't seem to work in an unprivileged container. Happy to
 get info on how to circumvent this problem.
 
 ### Configuration
@@ -39,7 +39,7 @@ available config settings, please take a look into the `EDITBASE_` variables in 
 
 If for example you want to override the enlarge and shrink sizes for the image build, mount something like this as `/CustoPiZer/config.local`:
 
-``` bash
+```bash
 # enlarge image by 100MB prior to customization
 EDITBASE_IMAGE_ENLARGEROOT=100
 
@@ -57,7 +57,7 @@ docker run --rm --privileged -v /path/to/workspace:/CustoPiZer/workspace -v /pat
 
 Place this in `workspace/scripts/01-update-octoprint`:
 
-``` bash
+```bash
 set -x
 set -e
 
@@ -80,7 +80,7 @@ CustoPiZer also ships with an interactive `enter_image` script that mounts the i
 unmounts and exists again.
 
 This allows you to inspect an existing image prior or post modification, e.g. to test stuff out interactively. Be sure to always operate on a copy of the image
-as the image *will* be changed by you interacting with it, even if only subtly (e.g. file timestamps).
+as the image _will_ be changed by you interacting with it, even if only subtly (e.g. file timestamps).
 
 To use, you have to slightly modify the docker call:
 
@@ -92,58 +92,58 @@ docker run -it --rm --privileged -v /path/to/image.img:/image.img ghcr.io/octopr
 
 There's a composite action available that can be used as a step inside a GitHub Action workflow:
 
-``` yaml
+```yaml
 - name: Run CustoPiZer
   uses: OctoPrint/CustoPiZer@main
   with:
     workspace: "${{ github.workspace }}/build"
-    scripts:  "${{ github.workspace }}/scripts"
+    scripts: "${{ github.workspace }}/scripts"
 ```
 
 It's also possible to pass on a JSON encoded object with additional environment variables to pass on to the docker call and make usable
 inside the script context, e.g.:
 
-``` yaml
+```yaml
 - name: Run CustoPiZer
   uses: OctoPrint/CustoPiZer@main
   with:
     workspace: "${{ github.workspace }}/build"
-    scripts:  "${{ github.workspace }}/scripts"
+    scripts: "${{ github.workspace }}/scripts"
     environment: '{ "OCTOPRINT_VERSION": "${{ env.OCTOPRINT_VERSION }}" }'
 ```
 
-> 👆 **Heads-up**
+> [!IMPORTANT]
 >
-> Make sure to use *double quotes* for the JSON object keys and values, otherwise `jq` will raise a syntax error.
-> 
-> This is ok:
+> Make sure to use _double quotes_ for the JSON object keys and values, otherwise `jq` will raise a syntax error.
+>
+> ✅ This is ok:
 >
 >     environment: '{ "OCTOPRINT_VERSION": "${{ env.OCTOPRINT_VERSION }}" }'
 >
-> This will fail:
+> ❌ This will fail:
 >
 >     environment: "{ 'OCTOPRINT_VERSION': '${{ env.OCTOPRINT_VERSION }}' }"
 
 If you need to provide a custom `config.local`, e.g. to override filesystem extending/shrinking,
 you can do that via the `config` parameter:
 
-``` yaml
+```yaml
 - name: Run CustoPiZer
   uses: OctoPrint/CustoPiZer@main
   with:
     workspace: "${{ github.workspace }}/build"
-    scripts:  "${{ github.workspace }}/scripts"
+    scripts: "${{ github.workspace }}/scripts"
     config: "${{ github.workspace }}/config.local"
 ```
 
 And finally, you may also provide the tag or digest to use for CustoPiZer itself - helpful if you want to run dev versions, e.g. those built from the `main` branch:
 
-``` yaml
+```yaml
 - name: Run CustoPiZer
   uses: OctoPrint/CustoPiZer@main
   with:
     workspace: "${{ github.workspace }}/build"
-    scripts:  "${{ github.workspace }}/scripts"
+    scripts: "${{ github.workspace }}/scripts"
     custopizer: "main"
 ```
 
@@ -153,7 +153,7 @@ For a complex example usage that also includes repository dispatch, creating rel
 
 To ensure error handling is taken care of and some tooling is available, all customization scripts should start with these lines:
 
-``` bash
+```bash
 set -x
 set -e
 
@@ -170,14 +170,14 @@ Scripts are run as `root` user inside the image, so if you need to do things as 
 
 `common.sh` contains some helpful tools to streamline some common tasks at build time:
 
-  * `unpack <source folder> <target folder> <target user>`: Copies files from source to target folder, `chown`ing to user and keeping dates and permissions
-  * `is_installed <package>`: Succeeds if the package is already installed
-  * `is_in_apt <package>`: Succeeds if the package is available in `apt`
-  * `remove_if_installed <packages>`: Removes the packages if they are installed (interesting for decluttering)
-  * `systemctl_if_exists <systemctl command...>`: Runs the `systemctl` command if `systemctl` is available
-  * `pause <message>`: Display message and wait for enter to be pressed, useful for debugging
-  * `echo_red <message>`: Display message in red
-  * `echo_green <message>`: Display message in green
+- `unpack <source folder> <target folder> <target user>`: Copies files from source to target folder, `chown`ing to user and keeping dates and permissions
+- `is_installed <package>`: Succeeds if the package is already installed
+- `is_in_apt <package>`: Succeeds if the package is available in `apt`
+- `remove_if_installed <packages>`: Removes the packages if they are installed (interesting for decluttering)
+- `systemctl_if_exists <systemctl command...>`: Runs the `systemctl` command if `systemctl` is available
+- `pause <message>`: Display message and wait for enter to be pressed, useful for debugging
+- `echo_red <message>`: Display message in red
+- `echo_green <message>`: Display message in green
 
 Any kind of non-`0` exit code will make the build fail, so make sure to develop your update scripts defensively. If a command might fail without
 the whole build failing, use `|| true`, e.g. `rm some/file || true`.
@@ -188,7 +188,7 @@ Note that CustoPiZer will install a policy during build to ensure no services ar
 
 ### Updating OctoPrint to the latest release
 
-``` bash
+```bash
 set -x
 set -e
 
@@ -216,12 +216,12 @@ docker run --rm --privileged \
 
 or for the GitHub action:
 
-``` yaml
+```yaml
 - name: Run CustoPiZer
   uses: OctoPrint/CustoPiZer@main
   with:
     workspace: "${{ github.workspace }}/build"
-    scripts:  "${{ github.workspace }}/scripts"
+    scripts: "${{ github.workspace }}/scripts"
     environment: '{ "OCTOPRINT_VERSION": "1.6.1" }'
 ```
 
@@ -229,7 +229,7 @@ This also allows to install prereleases. If this environment variable is not set
 
 ### Preinstalling additional plugins
 
-``` bash
+```bash
 set -x
 set -e
 
@@ -253,7 +253,7 @@ done
 
 ### Adding additional tooling like `avrdude`
 
-``` bash
+```bash
 set -x
 set -e
 
@@ -269,7 +269,7 @@ apt install --yes avrdude
 
 Put the following script into `workspace/scripts/files/settings/merge-settings.py`:
 
-``` python
+```python
 #!/usr/bin/env python3
 import yaml
 import sys
@@ -323,7 +323,7 @@ def merge_config_files(input_file, config_file):
 
     with open(config_file, mode="r", encoding="utf8") as f:
         config = yaml.safe_load(f)
-    
+
     merged = dict_merge(config, to_merge)
 
     with open(config_file, mode="w", encoding="utf8") as f:
@@ -346,7 +346,7 @@ Place a yaml file containing the settings you wish to merge into OctoPrint's act
 
 Then use this customization script:
 
-``` bash
+```bash
 set -x
 set -e
 
@@ -359,8 +359,7 @@ install_cleanup_trap
 sudo -u pi /home/pi/oprint/bin/python /files/settings/merge-settings.py /files/settings/settings.yaml /home/pi/.octoprint/config.yaml
 ```
 
-> ✋ **Warning**
+> [!CAUTION]
 >
-> Make sure to not ship any secret keys, passphrases, generated UUIDs or similar here. They will otherwise be the same across all instances created with
-> this image!
-
+> Make sure to not ship any secret keys, passphrases, generated UUIDs or similar here.
+> They will otherwise be the same across all instances created with this image!
