@@ -31,22 +31,23 @@ if [[ "${EDITBASE_DISTRO}" == "armbian" || "${EDITBASE_DISTRO}" == "ubuntu" ]]; 
   echo "nameserver 1.1.1.1" >> /etc/resolv.conf
 fi
 
+apt-get update --allow-releaseinfo-change
+if [ $( is_in_apt polkitd) -eq 1 ]; then
+  sudo apt-get -y install polkitd
+elif [ $( is_in_apt policykit-1 ) -eq 1 ]; then
+  sudo apt-get -y install policykit-1
+fi
+
+# prevent any installed services from automatically starting
+echo exit 101 > /usr/sbin/policy-rc.d
+chmod +x /usr/sbin/policy-rc.d
+
 if [ "${EDITBASE_DISTRO}" == "ubuntu" ]; then
   unpack /filesystem/ubuntu / root
   
-  apt-get update --allow-releaseinfo-change
   apt-get install -y net-tools wireless-tools dhcpcd5
-  if [ $( is_in_apt policykit-1 ) -eq 1 ]; then
-    apt-get -y install policykit-1
-  fi
   
-  # prevent any installed services from automatically starting
-  echo exit 101 > /usr/sbin/policy-rc.d
-  chmod +x /usr/sbin/policy-rc.d
   systemctl enable dhcpcd.service
-  
-  #Undo prevent any installed services from automatically starting
-  rm -r /usr/sbin/policy-rc.d || true
 fi
 
 if [ -n "$EDITBASE_APT_PROXY" ]
@@ -71,12 +72,3 @@ then
   cat /home/"${EDITBASE_USER}"/.pip/pip.conf
   cat /home/"${EDITBASE_USER}"/.pydistutils.cfg
 fi
-
-apt-get update --allow-releaseinfo-change
-if [ $( is_in_apt policykit-1 ) -eq 1 ]; then
-  sudo apt-get -y install policykit-1
-fi
-
-# prevent any installed services from automatically starting
-echo exit 101 > /usr/sbin/policy-rc.d
-chmod +x /usr/sbin/policy-rc.d

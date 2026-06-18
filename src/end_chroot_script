@@ -6,6 +6,7 @@
 ########
 set -ex
 
+#Undo prevent any installed services from automatically starting
 rm -r /usr/sbin/policy-rc.d || true
 
 if [ -n "$EDITBASE_APT_PROXY" ]
