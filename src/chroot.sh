@@ -3,27 +3,93 @@
 
 ## chroot helpers
 
-function prepare_chroot_environment() {
-  # figure out which qemu to use - if any - and ensure its availability & functionality inside the chroot
-  if [ "$(arch)" != "armv7l" ] && [ "$(arch)" != "aarch64" ] && [ "$(arch)" != "arm64" ] ; then
-    if [ "$EDITBASE_ARCH" == "armv7l" ]; then
-      # cross-compile for arm 32bit
-      update-binfmts --enable qemu-arm
-      cp `which qemu-arm-static` usr/bin/qemu-arm-static
-      export QEMU=usr/bin/qemu-arm-static
+# Register a qemu-user-static binfmt_misc entry with the CF flags:
+#   C - kernel derives credentials from the binary (preserves suid, e.g. sudo).
+#   F - "fix-binary": interpreter fd is pinned at register time and survives chroot.
+#
+# Registers directly via /proc/sys/fs/binfmt_misc/register because
+# `update-binfmts` does not expose the credentials flag.
+#
+# $1 = qemu target arch (e.g. "arm", "aarch64")
+function _binfmt_register_cf() {
+  local arch="$1"
+  local name="qemu-$arch"
+  local entry="/proc/sys/fs/binfmt_misc/$name"
 
-    elif [ "$EDITBASE_ARCH" == "aarch64" ] || [ "$EDITBASE_ARCH" == "arm64" ]; then
-      # cross-compile for arm 64bit
-      update-binfmts --enable qemu-aarch64
-      cp `which qemu-aarch64-static` usr/bin/qemu-aarch64-static
-      export QEMU=usr/bin/qemu-aarch64-static
-    fi
-
-    (mount | grep -q -v "type binfmt_misc") || mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
-
+  # Find the qemu interpreter for $arch. Debian's packaging changed:
+  #   bookworm: /usr/bin/qemu-$arch-static
+  #   trixie:   /usr/bin/qemu-$arch
+  local interp
+  if [ -e "/usr/bin/qemu-$arch" ]; then
+    interp="/usr/bin/qemu-$arch"
+  elif [ -e "/usr/bin/qemu-$arch-static" ]; then
+    interp="/usr/bin/qemu-$arch-static"
   else
-    # arch native
-    export QEMU=
+    echo "no qemu-$arch interpreter found"; return 1
+  fi
+
+  # Make sure binfmt_misc is mounted
+  mount | grep -q "type binfmt_misc" || \
+    mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
+
+  # If already registered with both C and F flags, nothing to do.
+  # C preserves credentials (suid), F pins the interpreter fd so it
+  # survives chroot - both are required for this setup.
+  if [ -f "$entry" ] \
+     && grep -qE "^flags:.*C" "$entry" \
+     && grep -qE "^flags:.*F" "$entry"; then
+    echo "binfmt $name already registered with CF flags, skipping."
+    return 0
+  fi
+
+  # Remove the existing (likely F-only / credentials-no) entry so we can
+  # re-register with our flags.
+  [ -f "$entry" ] && echo -1 > "$entry"
+
+  # Pull magic/mask from the qemu spec file shipped by Debian. The path and
+  # format changed between bookworm and trixie:
+  #   trixie:   /usr/share/qemu/binfmt.d/$name.conf  (single-line register fmt)
+  #   bookworm: /usr/share/binfmts/$name             (multi-line key/value fmt)
+  local spec_new="/usr/share/qemu/binfmt.d/$name.conf"
+  local spec_old="/usr/share/binfmts/$name"
+
+  local magic mask
+  if [ -f "$spec_new" ]; then
+    # Format: :name:M::magic:mask:interpreter:flags
+    magic=$(awk -F: '{print $5}' "$spec_new")
+    mask=$(awk  -F: '{print $6}' "$spec_new")
+  elif [ -f "$spec_old" ]; then
+    magic=$(awk '/^magic / {print $2}' "$spec_old")
+    mask=$(awk  '/^mask / {print $2}'  "$spec_old")
+  else
+    echo "binfmt spec missing (tried: $spec_new, $spec_old)"
+    return 1
+  fi
+
+  [ -n "$magic" ] && [ -n "$mask" ] \
+    || { echo "could not parse magic/mask from spec"; return 1; }
+
+  # Register with CF flags. The kernel parses the \xNN escape sequences
+  # in magic/mask itself; we just pass them through verbatim.
+  echo "Registering $name -> $interp with flags CF..."
+  printf ':%s:M::%s:%s:%s:CF' "$name" "$magic" "$mask" "$interp" \
+    > /proc/sys/fs/binfmt_misc/register
+}
+
+function prepare_chroot_environment() {
+  # When cross-building on a non-matching host, register qemu-user-static via
+  # binfmt_misc so the kernel transparently runs foreign-arch binaries in chroot.
+  # Note: aarch64/arm64 hosts can execute armv7l binaries natively via the
+  # kernel's AArch32 compat mode, so no qemu is needed in that case.
+  local host_arch
+  host_arch="$(arch)"
+
+  if [ "$EDITBASE_ARCH" == "armv7l" ] \
+     && [[ "$host_arch" != "armv7l" && "$host_arch" != "aarch64" && "$host_arch" != "arm64" ]]; then
+    _binfmt_register_cf arm
+  elif [[ "$EDITBASE_ARCH" == "aarch64" || "$EDITBASE_ARCH" == "arm64" ]] \
+       && [[ "$host_arch" != "aarch64" && "$host_arch" != "arm64" ]]; then
+    _binfmt_register_cf aarch64
   fi
 
   # mount /proc if configured to do so
