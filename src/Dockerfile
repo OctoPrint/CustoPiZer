@@ -1,9 +1,9 @@
 # syntax=docker/dockerfile:1
-ARG VERSION="bookworm"
+ARG VERSION="trixie"
 FROM debian:${VERSION}
 ARG VERSION
 
-ENV PACKAGES="qemu-system qemu-user-static binfmt-support build-essential lsof sudo util-linux fdisk"
+ENV PACKAGES="qemu-system qemu-user binfmt-support build-essential lsof sudo util-linux fdisk e2fsprogs"
 
 RUN set -ex \
     && apt-get update \
